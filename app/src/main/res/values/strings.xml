@@ -1,0 +1,45 @@
+<resources>
+    <string name="app_name">ElevatorTycoon</string>
+    <string name="action_settings">Settings</string>
+    <string-array name="names">
+        <item>test</item>
+        <item>Abdoulaye</item>
+        <item>Adam</item>
+        <item>Adélard</item>
+        <item>Adémard</item>
+        <item>Adjudor</item>
+        <item>Adrien</item>
+        <item>Alarie</item>
+        <item>Alban</item>
+        <item>Albérick</item>
+        <item>Albert</item>
+        <item>Albini</item>
+        <item>Aldéi</item>
+        <item>Aldéric</item>
+        <item>Alexandre</item>
+        <item>Alexymère</item>
+        <item>Alfred</item>
+        <item>Alphé</item>
+        <item>Alphonse</item>
+        <item>Amadou</item>
+        <item>Amédée</item>
+        <item>Anaclet</item>
+        <item>André</item>
+        <item>Ange-Aimé</item>
+        <item>Ange-Albert</item>
+        <item>Anicet</item>
+        <item>Anthime</item>
+        <item>Antoine</item>
+        <item>Antonio</item>
+        <item>Aquila</item>
+        <item>Arcade</item>
+        <item>Aristide</item>
+        <item>Armand</item>
+        <item>Arthur</item>
+        <item>Auguste</item>
+        <item>Augusto</item>
+        <item>Aurèle</item>
+        <item>Auréus</item>
+   </string-array>
+
+    </resources>
