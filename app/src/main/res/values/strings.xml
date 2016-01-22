@@ -2,7 +2,6 @@
     <string name="app_name">ElevatorTycoon</string>
     <string name="action_settings">Settings</string>
     <string-array name="names">
-        <item>test</item>
         <item>Abdoulaye</item>
         <item>Adam</item>
         <item>Adélard</item>

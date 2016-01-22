@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,21 @@ public class MainActivity extends AppCompatActivity {
     public ImageView imageFW9;
     public ImageView imageFW10;
     public ImageView imageFW11;
+
+    private TextView textViewl10;
+    private TextView textViewl9;
+    private TextView textViewl8;
+    private TextView textViewl7;
+    private TextView textViewl6;
+    private TextView textViewl5;
+    private TextView textViewl4;
+    private TextView textViewl3;
+    private TextView textViewl2;
+    private TextView textViewl1;
+    private TextView textViewl0;
+
     public List<ImageView> IV_folks;
+    public List<TextView> TV_folks;
     public List<Folk> folks;
     public Simulation simu;
     public Elevator elevator_1;
@@ -58,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void set_image_Folk(){
+        for(int i=0;i<=10;i++){
+            TV_folks.get(i).setText("");
+        }
         for(float i=0;i<IV_folks.size();i++) {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(150, 150);
             params.leftMargin = 250;
@@ -72,12 +90,16 @@ public class MainActivity extends AppCompatActivity {
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 0, 0));
             }
+            int nb_of_folk_wainting = 0;
             if(folks.get(i).isWaiting()){
-                Log.i("Waiting",folks.get(i).getName()+"ON "+folks.get(i).getCurrent_floor());
+                Log.i("Waiting", folks.get(i).getName() + " ON " + folks.get(i).getCurrent_floor());
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
+                nb_of_folk_wainting++;
             }
+            if(nb_of_folk_wainting > 0)
+                TV_folks.get(folks.get(i).getCurrent_floor()).setText("x"+elevator_1.getFloor_queue()[folks.get(i).getCurrent_floor()]);
         }
     }
 
@@ -119,8 +141,24 @@ public class MainActivity extends AppCompatActivity {
         imageFW10 = (ImageView) findViewById(R.id.imageFolkW10);
         imageFW11 = (ImageView) findViewById(R.id.imageFolkW11);
 
+        textViewl10 = (TextView) findViewById(R.id.textViewl10);
+        textViewl9 = (TextView) findViewById(R.id.textViewl9);
+        textViewl8 = (TextView) findViewById(R.id.textViewl8);
+        textViewl7 = (TextView) findViewById(R.id.textViewl7);
+        textViewl6 = (TextView) findViewById(R.id.textViewl6);
+        textViewl5 = (TextView) findViewById(R.id.textViewl5);
+        textViewl4 = (TextView) findViewById(R.id.textViewl4);
+        textViewl3 = (TextView) findViewById(R.id.textViewl3);
+        textViewl2 = (TextView) findViewById(R.id.textViewl2);
+        textViewl1 = (TextView) findViewById(R.id.textViewl1);
+        textViewl0 = (TextView) findViewById(R.id.textViewl0);
+
+
         IV_folks = new ArrayList<>();
         IV_folks.add(imageFW1);IV_folks.add(imageFW2);IV_folks.add(imageFW3);IV_folks.add(imageFW4);IV_folks.add(imageFW5);IV_folks.add(imageFW6);IV_folks.add(imageFW7);IV_folks.add(imageFW8);IV_folks.add(imageFW9);IV_folks.add(imageFW10);IV_folks.add(imageFW11);
+
+        TV_folks = new ArrayList<>();
+        TV_folks.add(textViewl0);TV_folks.add(textViewl1);TV_folks.add(textViewl2);TV_folks.add(textViewl3);TV_folks.add(textViewl4);TV_folks.add(textViewl5);TV_folks.add(textViewl6);TV_folks.add(textViewl7);TV_folks.add(textViewl8);TV_folks.add(textViewl9);TV_folks.add(textViewl10);
 
         repaint();
 
@@ -177,33 +215,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                 }).start();
 
-
-
-
-//                Random rand = new Random();
-//                int test = rand.nextInt(100);
-//                if(test<5){
-//                    int int_name = rand.nextInt(folks_name.length);
-//                    Folk new_folk = new Folk(elevator_1,folks_name[int_name]);
-//                    folks.add(new_folk);
-//                }
-
             }
         });
-
 
         FloatingActionButton add = (FloatingActionButton) findViewById(R.id.add);
         add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                simu.getFolks().add(new Folk(MainActivity.this,elevator_1,"NEWFOLK"));
-
-
+                Random rand = new Random();
+                int rr = rand.nextInt(30);
+                simu.getFolks().add(new Folk(MainActivity.this,elevator_1,folks_name[rr]));
             }
         });
-
-
 
     }
 

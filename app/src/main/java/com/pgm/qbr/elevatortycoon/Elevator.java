@@ -14,16 +14,16 @@ public class Elevator {
     private int max_level;
     private int floor;
     private int nb_person_in;
-    private boolean[] floor_queue;
+    private int[] floor_queue;
     private MainActivity mainActivity;
 
-    public boolean[] getFloor_queue() {
+    public int[] getFloor_queue() {
         return floor_queue;
     }
     public void print_Floor_queue(){
         String queue="";
         for(int i=0;i<this.getFloor_queue().length;i++){
-            if(this.floor_queue[i]){
+            if(this.floor_queue[i]>0){
                 queue=queue+i+" ";
             }
         }
@@ -38,9 +38,9 @@ public class Elevator {
         this.max_level = 10;
         this.nb_person_in = 0;
         this.floor = 0;
-        this.floor_queue = new boolean[this.max_level];
+        this.floor_queue = new int[this.max_level];
         for (int i = 0 ;i<this.floor_queue.length; i++){
-            this.floor_queue[i] = false;
+            this.floor_queue[i] = 0;
         }
         this.mainActivity = ma;
     }
@@ -60,12 +60,12 @@ public class Elevator {
     }
 
     public void add_requested_floor(int floor){
-        this.floor_queue[floor] = true;
+        this.floor_queue[floor] += 1;
 
     }
 
     public void remove_requested_floor(int floor){
-        this.floor_queue[floor] = false;
+        this.floor_queue[floor] -= 1;
 
     }
 
@@ -81,7 +81,7 @@ public class Elevator {
         List<Integer> tmp_list = new ArrayList<>();
         tmp_list.clear();
         for(int i=0;i<this.floor_queue.length;i++){
-            if(this.floor_queue[i]){
+            if(this.floor_queue[i] > 0){
                 tmp_list.add(i);
             }
         }
@@ -90,6 +90,10 @@ public class Elevator {
         for(int i=0; i <tmp_list.size(); i++){
 
             double temp = Math.abs(- this.floor + tmp_list.get(i));
+
+            //TODO
+            //Ponderer la distance en fonction de nombre de personne en attente a un etage
+            int pond_floor = this.floor_queue[tmp_list.get(i)];
 
             distance.add(temp);
             Log.i("Distance",Double.toString(temp));
