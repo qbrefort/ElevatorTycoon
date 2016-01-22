@@ -1,5 +1,6 @@
 package com.pgm.qbr.elevatortycoon;
 
+import android.app.Activity;
 import android.util.Log;
 
 import java.util.Random;
@@ -15,8 +16,9 @@ public class Folk {
     private boolean waiting;
     private boolean isIn;
     private boolean treated;
+    private MainActivity mainActivity;
 
-    public Folk(Elevator elevator,String name) {
+    public Folk(MainActivity mA, Elevator elevator,String name) {
         Random rand = new Random();
         this.name = name;
         this.wanted_floor =  rand.nextInt(10);
@@ -27,6 +29,7 @@ public class Folk {
         this.waiting = true;
         this.isIn = false;
         this.treated = false;
+        this.mainActivity = mA;
         request_elevator(elevator);
     }
 
@@ -47,13 +50,11 @@ public class Folk {
 
     public void goInElevator(Elevator elevator){
         if(this.waiting && this.current_floor == elevator.getFloor()){
-            Log.i("IN: ",this.name+" AND request"+this.wanted_floor);
+            Log.i("IN: ", this.name + " AND requested " + this.wanted_floor);
             elevator.add_person();
             elevator.add_requested_floor(this.wanted_floor);
             this.waiting = false;
             this.isIn = true;
-        }else{
-            this.waiting = true;
         }
     }
 
@@ -62,8 +63,6 @@ public class Folk {
             elevator.remove_person();
             this.isIn = false;
             this.treated = true;
-        }else{
-            this.isIn = true;
         }
     }
 
@@ -71,7 +70,7 @@ public class Folk {
         return this.treated;
     }
     public boolean isWaiting(){
-        return this.waiting;
+        return (this.waiting);
     }
 
 }

@@ -3,10 +3,12 @@ package com.pgm.qbr.elevatortycoon;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,25 +22,26 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageView imageElevator;
-    private ImageView imageFW1;
-    private ImageView imageFW2;
-    private ImageView imageFW3;
-    private ImageView imageFW4;
-    private ImageView imageFW5;
-    private ImageView imageFW6;
-    private ImageView imageFW7;
-    private ImageView imageFW8;
-    private ImageView imageFW9;
-    private ImageView imageFW10;
-    private ImageView imageFW11;
-    private List<ImageView> IV_folks;
-    private List<Folk> folks;
-    private Simulation simu;
-    private Elevator elevator_1;
-    private String[] folks_name;
+    public ImageView imageElevator;
+    public ImageView imageFW1;
+    public ImageView imageFW2;
+    public ImageView imageFW3;
+    public ImageView imageFW4;
+    public ImageView imageFW5;
+    public ImageView imageFW6;
+    public ImageView imageFW7;
+    public ImageView imageFW8;
+    public ImageView imageFW9;
+    public ImageView imageFW10;
+    public ImageView imageFW11;
+    public List<ImageView> IV_folks;
+    public List<Folk> folks;
+    public Simulation simu;
+    public Elevator elevator_1;
+    public String[] folks_name;
+    private int iter;
 
-    public void update_image(){
+    public void repaint(){
         set_image_elevator();
         set_image_Folk();
     }
@@ -61,15 +64,16 @@ public class MainActivity extends AppCompatActivity {
             params.topMargin = (int) ((10 - i) * 1175 / 10 + 5);
             IV_folks.get((int) i).setLayoutParams(params);
             IV_folks.get((int) i).setVisibility(View.INVISIBLE);
+            IV_folks.get((int) i).setBackgroundColor(Color.rgb(255, 255, 255));
         }
         for(int i=0;i<folks.size();i++){
             if (folks.get(i).isTreated()){
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getWanted_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 0, 0));
-                folks.remove(i);
             }
-            else if(folks.get(i).isWaiting()){
+            if(folks.get(i).isWaiting()){
+                Log.i("Waiting",folks.get(i).getName()+"ON "+folks.get(i).getCurrent_floor());
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
@@ -85,10 +89,10 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        elevator_1 = new Elevator();
-        Folk gerard = new Folk(elevator_1,"Gerard");
-        Folk jeanmich = new Folk(elevator_1,"JeanMich");
-        Folk ray = new Folk(elevator_1,"Raymond");
+        elevator_1 = new Elevator(this);
+        Folk gerard = new Folk(this,elevator_1,"Gerard");
+        Folk jeanmich = new Folk(this,elevator_1,"JeanMich");
+        Folk ray = new Folk(this,elevator_1,"Raymond");
 
         folks = new ArrayList<>();
 
@@ -96,7 +100,9 @@ public class MainActivity extends AppCompatActivity {
         folks.add(jeanmich);
         folks.add(ray);
 
-        simu = new Simulation(folks,elevator_1);
+        simu = new Simulation(this,folks,elevator_1);
+
+        iter = 0;
 
         Resources res = getResources();
         folks_name = res.getStringArray(R.array.names);
@@ -116,17 +122,62 @@ public class MainActivity extends AppCompatActivity {
         IV_folks = new ArrayList<>();
         IV_folks.add(imageFW1);IV_folks.add(imageFW2);IV_folks.add(imageFW3);IV_folks.add(imageFW4);IV_folks.add(imageFW5);IV_folks.add(imageFW6);IV_folks.add(imageFW7);IV_folks.add(imageFW8);IV_folks.add(imageFW9);IV_folks.add(imageFW10);IV_folks.add(imageFW11);
 
+        repaint();
 
+        FloatingActionButton resb = (FloatingActionButton) findViewById(R.id.reset);
+        resb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity ma = MainActivity.this;
+                elevator_1 = new Elevator(ma);
+                Folk gerard = new Folk(ma,elevator_1,"Gerard");
+                Folk jeanmich = new Folk(ma,elevator_1,"JeanMich");
+                Folk ray = new Folk(ma,elevator_1,"Raymond");
 
-        update_image();
+                folks = new ArrayList<>();
+
+                folks.add(gerard);
+                folks.add(jeanmich);
+                folks.add(ray);
+
+                iter = 0;
+
+                simu = new Simulation(ma,folks,elevator_1);
+                repaint();
+            }
+        });
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                update_image();
-                simu.iterate();
-                update_image();
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            while (folks.size()>0) {
+                                Thread.sleep(200);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        simu.iterate(iter);
+                                        iter++;
+                                        iter = iter % 3;
+                                        repaint();
+                                        for (int i = 0; i < folks.size(); i++) {
+                                            if(folks.get(i).isTreated()){
+                                                folks.remove(i);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (InterruptedException e) {
+                        }
+                        }
+                }).start();
+
+
 
 
 //                Random rand = new Random();
