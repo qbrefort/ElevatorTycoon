@@ -23,6 +23,10 @@ public class Simulation {
         this.mainActivity = ma;
     }
 
+    public List<Folk> getFolks() {
+        return folks;
+    }
+
     public int getFloor_elevator() {
         return this.elevator.getFloor();
     }

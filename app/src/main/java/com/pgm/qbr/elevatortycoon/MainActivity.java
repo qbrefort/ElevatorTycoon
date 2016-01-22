@@ -130,9 +130,9 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MainActivity ma = MainActivity.this;
                 elevator_1 = new Elevator(ma);
-                Folk gerard = new Folk(ma,elevator_1,"Gerard");
-                Folk jeanmich = new Folk(ma,elevator_1,"JeanMich");
-                Folk ray = new Folk(ma,elevator_1,"Raymond");
+                Folk gerard = new Folk(ma, elevator_1, "Gerard");
+                Folk jeanmich = new Folk(ma, elevator_1, "JeanMich");
+                Folk ray = new Folk(ma, elevator_1, "Raymond");
 
                 folks = new ArrayList<>();
 
@@ -142,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
 
                 iter = 0;
 
-                simu = new Simulation(ma,folks,elevator_1);
+                simu = new Simulation(ma, folks, elevator_1);
                 repaint();
             }
         });
@@ -190,6 +190,21 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+
+        FloatingActionButton add = (FloatingActionButton) findViewById(R.id.add);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                simu.getFolks().add(new Folk(MainActivity.this,elevator_1,"NEWFOLK"));
+
+
+            }
+        });
+
+
+
     }
 
     @Override

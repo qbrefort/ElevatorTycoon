@@ -79,18 +79,22 @@ public class Elevator {
         print_Floor_queue();
         double go = 20;
         List<Integer> tmp_list = new ArrayList<>();
+        tmp_list.clear();
         for(int i=0;i<this.floor_queue.length;i++){
             if(this.floor_queue[i]){
                 tmp_list.add(i);
             }
         }
-
+        List<Double> distance = new ArrayList<>();
+        double best_dist = go;
         for(int i=0; i <tmp_list.size(); i++){
 
-            double temp = (double) this.floor - (double) tmp_list.get(i);
-            temp = Math.abs( temp);
+            double temp = Math.abs(- this.floor + tmp_list.get(i));
+
+            distance.add(temp);
             Log.i("Distance",Double.toString(temp));
-            if(temp  < go ){
+            if(temp  < best_dist ){
+                best_dist = temp;
                 go = tmp_list.get(i);
                 Log.i("Distance chosen",Double.toString(temp));
             }
