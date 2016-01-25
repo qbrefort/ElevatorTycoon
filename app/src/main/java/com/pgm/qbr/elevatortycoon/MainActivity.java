@@ -1,5 +1,6 @@
 package com.pgm.qbr.elevatortycoon;
 
+import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
 
     public ImageView imageElevator;
+    public ImageView imageElevator2;
     public ImageView imageFW1;
     public ImageView imageFW2;
     public ImageView imageFW3;
@@ -47,12 +49,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewl2;
     private TextView textViewl1;
     private TextView textViewl0;
+    private TextView textViewFolkIn;
+    private TextView textViewFolkIn2;
 
     public List<ImageView> IV_folks;
     public List<TextView> TV_folks;
     public List<Folk> folks;
     public Simulation simu;
-    public Elevator elevator_1;
+    public Elevator[] elevators;
     public String[] folks_name;
     private int iter;
 
@@ -63,32 +67,67 @@ public class MainActivity extends AppCompatActivity {
 
     public void set_image_elevator(){
         imageElevator = (ImageView) findViewById(R.id.imageElevator);
-        float cf = simu.getFloor_elevator();
+        imageElevator2 = (ImageView) findViewById(R.id.imageElevator2);
+        float cf = simu.getFloor_elevator(0);
+        float cf2 = simu.getFloor_elevator(1);
+        int got_to = (int) ((10-cf)*1175/10+5);
+        int got_to2 = (int) ((10-cf2)*1175/10+5);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(150, 150);
-        params.topMargin = (int) ((10-cf)*1175/10+5);
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(150, 150);
+        //params.topMargin = 0;
         params.leftMargin = 5;
+        params2.leftMargin = 5;
         imageElevator.setLayoutParams(params);
+        imageElevator2.setLayoutParams(params2);
+
+        ObjectAnimator anim = ObjectAnimator.ofFloat(imageElevator, "translationY", imageElevator.getY(), got_to);
+        anim.setDuration(150);
+        anim.start();
+
+        ObjectAnimator anim2 = ObjectAnimator.ofFloat(imageElevator2, "translationY", imageElevator2.getY(), got_to2);
+        anim2.setDuration(150);
+        anim2.start();
+
+
+        textViewFolkIn = (TextView) findViewById(R.id.textViewFolkIn);
+        textViewFolkIn.setText(Integer.toString(elevators[0].getNb_person_in()));
+
+        textViewFolkIn2 = (TextView) findViewById(R.id.textViewFolkIn2);
+        textViewFolkIn2.setText(Integer.toString(elevators[1].getNb_person_in()));
     }
 
-
-
     public void set_image_Folk(){
+
+        int off_set_X = 400;
+
         for(int i=0;i<=10;i++){
             TV_folks.get(i).setText("");
         }
         for(float i=0;i<IV_folks.size();i++) {
             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(150, 150);
-            params.leftMargin = 250;
             params.topMargin = (int) ((10 - i) * 1175 / 10 + 5);
-            IV_folks.get((int) i).setLayoutParams(params);
-            IV_folks.get((int) i).setVisibility(View.INVISIBLE);
-            IV_folks.get((int) i).setBackgroundColor(Color.rgb(255, 255, 255));
+            ImageView IV_to_move = IV_folks.get((int) i);
+            IV_to_move.setX(off_set_X);
+            IV_to_move.setLayoutParams(params);
+            IV_to_move.setVisibility(View.INVISIBLE);
+            IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
+
+            ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", off_set_X, off_set_X+100);
+            anim.setDuration(300);
+            //anim.start();
         }
         for(int i=0;i<folks.size();i++){
             if (folks.get(i).isTreated()){
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getWanted_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 0, 0));
+
+                ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", off_set_X, off_set_X + 100);
+                anim.setDuration(300);
+                anim.start();
+                ObjectAnimator anim2 = ObjectAnimator.ofFloat(IV_to_move, "alpha", 0,1);
+                anim2.setDuration(300);
+                anim2.start();
             }
             int nb_of_folk_wainting = 0;
             if(folks.get(i).isWaiting()){
@@ -96,11 +135,90 @@ public class MainActivity extends AppCompatActivity {
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
+                ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", -10, 10);
+                anim.setDuration(300);
+                //anim.start();
                 nb_of_folk_wainting++;
             }
             if(nb_of_folk_wainting > 0)
-                TV_folks.get(folks.get(i).getCurrent_floor()).setText("x"+elevator_1.getFloor_queue()[folks.get(i).getCurrent_floor()]);
+                TV_folks.get(folks.get(i).getCurrent_floor()).setText("x"+elevators[1].getFloor_queue()[folks.get(i).getCurrent_floor()]);
         }
+    }
+
+
+
+    public void setOnClickListenerReset(){
+        FloatingActionButton resb = (FloatingActionButton) findViewById(R.id.reset);
+        resb.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                MainActivity ma = MainActivity.this;
+                elevators = new Elevator[2];
+                elevators[0] = new Elevator(ma);
+                elevators[1] = new Elevator(ma);
+                elevators[1].setFloor(5);
+                folks = new ArrayList<>();
+                simu.setFolks(folks);
+                for(int i=0;i<10;i++){
+                    Random rand = new Random();
+                    int rr = rand.nextInt(30);
+                    simu.getFolks().add(new Folk(MainActivity.this, elevators, folks_name[rr]));
+                }
+
+                iter = 0;
+
+                simu = new Simulation(ma, folks, elevators);
+                repaint();
+            }
+        });
+    }
+
+    public void setOnClickListenerRun(){
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            while (folks.size()>0) {
+                                Thread.sleep(200);
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        simu.iterate(iter);
+                                        iter++;
+                                        iter = iter % 3;
+                                        repaint();
+                                        for (int i = 0; i < folks.size(); i++) {
+                                            if(folks.get(i).isTreated()){
+                                                folks.remove(i);
+                                            }
+                                        }
+                                    }
+                                });
+                            }
+                        } catch (InterruptedException e) {
+                        }
+                    }
+                }).start();
+
+            }
+        });
+    }
+
+    public void setOnClickListenerAddFolk(){
+        FloatingActionButton add = (FloatingActionButton) findViewById(R.id.add);
+        add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Random rand = new Random();
+                int rr = rand.nextInt(30);
+                simu.getFolks().add(new Folk(MainActivity.this,elevators,folks_name[rr]));
+                repaint();
+            }
+        });
     }
 
 
@@ -111,10 +229,13 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        elevator_1 = new Elevator(this);
-        Folk gerard = new Folk(this,elevator_1,"Gerard");
-        Folk jeanmich = new Folk(this,elevator_1,"JeanMich");
-        Folk ray = new Folk(this,elevator_1,"Raymond");
+        elevators = new Elevator[2];
+        elevators[0] = new Elevator(this);
+        elevators[1] = new Elevator(this);
+
+        Folk gerard = new Folk(this,elevators,"Gerard");
+        Folk jeanmich = new Folk(this,elevators,"JeanMich");
+        Folk ray = new Folk(this,elevators,"Raymond");
 
         folks = new ArrayList<>();
 
@@ -122,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
         folks.add(jeanmich);
         folks.add(ray);
 
-        simu = new Simulation(this,folks,elevator_1);
+        simu = new Simulation(this,folks,elevators);
 
         iter = 0;
 
@@ -162,71 +283,9 @@ public class MainActivity extends AppCompatActivity {
 
         repaint();
 
-        FloatingActionButton resb = (FloatingActionButton) findViewById(R.id.reset);
-        resb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                MainActivity ma = MainActivity.this;
-                elevator_1 = new Elevator(ma);
-                Folk gerard = new Folk(ma, elevator_1, "Gerard");
-                Folk jeanmich = new Folk(ma, elevator_1, "JeanMich");
-                Folk ray = new Folk(ma, elevator_1, "Raymond");
-
-                folks = new ArrayList<>();
-
-                folks.add(gerard);
-                folks.add(jeanmich);
-                folks.add(ray);
-
-                iter = 0;
-
-                simu = new Simulation(ma, folks, elevator_1);
-                repaint();
-            }
-        });
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            while (folks.size()>0) {
-                                Thread.sleep(200);
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        simu.iterate(iter);
-                                        iter++;
-                                        iter = iter % 3;
-                                        repaint();
-                                        for (int i = 0; i < folks.size(); i++) {
-                                            if(folks.get(i).isTreated()){
-                                                folks.remove(i);
-                                            }
-                                        }
-                                    }
-                                });
-                            }
-                        } catch (InterruptedException e) {
-                        }
-                        }
-                }).start();
-
-            }
-        });
-
-        FloatingActionButton add = (FloatingActionButton) findViewById(R.id.add);
-        add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Random rand = new Random();
-                int rr = rand.nextInt(30);
-                simu.getFolks().add(new Folk(MainActivity.this,elevator_1,folks_name[rr]));
-            }
-        });
+        setOnClickListenerReset();
+        setOnClickListenerRun();
+        setOnClickListenerAddFolk();
 
     }
 

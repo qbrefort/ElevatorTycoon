@@ -18,19 +18,19 @@ public class Folk {
     private boolean treated;
     private MainActivity mainActivity;
 
-    public Folk(MainActivity mA, Elevator elevator,String name) {
+    public Folk(MainActivity mA, Elevator[] elevators,String name) {
         Random rand = new Random();
         this.name = name;
-        this.wanted_floor =  rand.nextInt(10);
-        this.current_floor =  rand.nextInt(10);
+        this.wanted_floor =  rand.nextInt(11);
+        this.current_floor =  rand.nextInt(11);
         while (this.current_floor == this.wanted_floor){
-            this.wanted_floor = rand.nextInt(10);
+            this.wanted_floor = rand.nextInt(11);
         }
         this.waiting = true;
         this.isIn = false;
         this.treated = false;
         this.mainActivity = mA;
-        request_elevator(elevator);
+        this.request_elevator(elevators);
     }
 
     public String getName(){
@@ -44,12 +44,13 @@ public class Folk {
         return wanted_floor;
     }
 
-    public void request_elevator(Elevator elevator){
-        elevator.add_requested_floor(this.current_floor);
+    public void request_elevator(Elevator[] elevators){
+        elevators[0].add_requested_floor(this.current_floor);
+        elevators[1].add_requested_floor(this.current_floor);
     }
 
     public void goInElevator(Elevator elevator){
-        if(this.waiting && this.current_floor == elevator.getFloor()){
+        if(this.waiting && !elevator.isFull() && this.current_floor == elevator.getFloor()){
             Log.i("IN: ", this.name + " AND requested " + this.wanted_floor);
             elevator.add_person();
             elevator.add_requested_floor(this.wanted_floor);
