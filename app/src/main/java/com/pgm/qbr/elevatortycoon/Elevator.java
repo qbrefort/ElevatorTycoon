@@ -10,7 +10,8 @@ import java.util.List;
  */
 public class Elevator {
 
-    private int capacity;
+    private String id;
+    private final int capacity;
     private int max_level;
     private int floor;
     private int nb_person_in;
@@ -31,11 +32,11 @@ public class Elevator {
                 queue=queue+i+" ";
             }
         }
-        Log.i("Queue",queue);
+        Log.i("Queue",this.id+" "+queue);
     }
 
     public Elevator(MainActivity ma) {
-        this.capacity = 2;
+        this.capacity = 3;
         this.max_level = 10;
         this.nb_person_in = 0;
         this.floor = 0;
@@ -44,7 +45,16 @@ public class Elevator {
             this.floor_queue[i] = 0;
         }
         this.algo = 3;
+        this.id = "Ex";
         this.mainActivity = ma;
+    }
+
+    public void setId(String id){
+        this.id = id;
+    }
+
+    public String getId(){
+        return this.id;
     }
 
     public void setAlgo(int alg){
@@ -79,12 +89,12 @@ public class Elevator {
     }
 
     public void move_to(int floor){
-        Log.i("Elevator", "decided to move from" +this.floor+" to "+ floor);
+        //Log.i("Elevator",this.id+ " decided to move from" +this.floor+" to "+ floor);
         this.floor = floor;
         if (!this.isFull()) {
             //TODO
             //Not sure if this will work anytime + I need to remove from both elevators
-            remove_requested_floor(floor);
+            //remove_requested_floor(floor);
         }
     }
 
@@ -201,7 +211,7 @@ public class Elevator {
 
     public boolean isFull(){
         if(this.nb_person_in >= this.capacity){
-            Log.i("Elevator","is full");
+            Log.i("Elevator",this.id+" is full");
             return true;
         }
         else

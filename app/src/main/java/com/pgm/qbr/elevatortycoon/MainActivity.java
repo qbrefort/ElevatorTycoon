@@ -116,6 +116,10 @@ public class MainActivity extends AppCompatActivity {
             anim.setDuration(300);
             //anim.start();
         }
+        int nb_of_folk_waiting[] = new int[11];
+        for (int i=0;i<nb_of_folk_waiting.length;i++){
+            nb_of_folk_waiting[i] = 0;
+        }
         for(int i=0;i<folks.size();i++){
             if (folks.get(i).isTreated()){
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getWanted_floor());
@@ -129,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                 anim2.setDuration(300);
                 anim2.start();
             }
-            int nb_of_folk_wainting = 0;
+
             if(folks.get(i).isWaiting()){
                 Log.i("Waiting", folks.get(i).getName() + " ON " + folks.get(i).getCurrent_floor());
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
@@ -138,10 +142,15 @@ public class MainActivity extends AppCompatActivity {
                 ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", -10, 10);
                 anim.setDuration(300);
                 //anim.start();
-                nb_of_folk_wainting++;
+                nb_of_folk_waiting[folks.get(i).getCurrent_floor()]++;
+
             }
-            if(nb_of_folk_wainting > 0)
-                TV_folks.get(folks.get(i).getCurrent_floor()).setText("x"+elevators[1].getFloor_queue()[folks.get(i).getCurrent_floor()]);
+
+        }
+        for (int i=0;i<nb_of_folk_waiting.length;i++){
+            if(nb_of_folk_waiting[i] != 0){
+                TV_folks.get(i).setText("x"+nb_of_folk_waiting[i]);
+            }
         }
     }
 
@@ -154,8 +163,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 MainActivity ma = MainActivity.this;
                 elevators = new Elevator[2];
-                elevators[0] = new Elevator(ma);
-                elevators[1] = new Elevator(ma);
+                elevators[0] = new Elevator(ma);elevators[0].setId("E1");
+                elevators[1] = new Elevator(ma);elevators[1].setId("E2");
                 elevators[1].setFloor(5);
                 folks = new ArrayList<>();
                 simu.setFolks(folks);

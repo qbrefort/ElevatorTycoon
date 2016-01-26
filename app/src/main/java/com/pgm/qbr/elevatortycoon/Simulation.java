@@ -42,19 +42,17 @@ public class Simulation {
                 break;
             case 1:
                 for (int i = 0; i < folks.size(); i++) {
-                    folks.get(i).goInElevator(this.elevators[0]);
-                    folks.get(i).goInElevator(this.elevators[1]);
-                }
-                break;
-            case 2:
-                for (int i = 0; i < folks.size(); i++) {
-                    folks.get(i).goOutElevator(this.elevators[0]);
-                    folks.get(i).goOutElevator(this.elevators[1]);
+                    folks.get(i).goOutElevator();
                     if (folks.get(i).isTreated()) {
                         Log.i("OUT", folks.get(i).getName());
                         this.mainActivity.repaint();
                         //folks.remove(i);
                     }
+                }
+                break;
+            case 2:
+                for (int i = 0; i < folks.size(); i++) {
+                    folks.get(i).goInElevator(elevators);
                 }
                 break;
         }

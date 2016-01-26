@@ -16,6 +16,7 @@ public class Folk {
     private boolean waiting;
     private boolean isIn;
     private boolean treated;
+    private Elevator folks_elevator;
     private MainActivity mainActivity;
 
     public Folk(MainActivity mA, Elevator[] elevators,String name) {
@@ -30,7 +31,7 @@ public class Folk {
         this.isIn = false;
         this.treated = false;
         this.mainActivity = mA;
-        this.request_elevator(elevators);
+        this.request_elevators(elevators);
     }
 
     public String getName(){
@@ -44,24 +45,39 @@ public class Folk {
         return wanted_floor;
     }
 
-    public void request_elevator(Elevator[] elevators){
-        elevators[0].add_requested_floor(this.current_floor);
-        elevators[1].add_requested_floor(this.current_floor);
+    public void request_elevators(Elevator[] elevators){
+        for(int i=0 ; i<elevators.length ; i++) {
+            Elevator elevator = elevators[i];
+            elevator.add_requested_floor(this.current_floor);
+        }
     }
-
-    public void goInElevator(Elevator elevator){
-        if(this.waiting && !elevator.isFull() && this.current_floor == elevator.getFloor()){
-            Log.i("IN: ", this.name + " AND requested " + this.wanted_floor);
-            elevator.add_person();
-            elevator.add_requested_floor(this.wanted_floor);
-            this.waiting = false;
-            this.isIn = true;
+    public void remove_request_elevators(Elevator[] elevators){
+        for(int ii=0 ; ii<elevators.length ; ii++) {
+            Elevator elevator_to_remove = elevators[ii];
+            elevator_to_remove.remove_requested_floor(this.current_floor);
         }
     }
 
-    public void goOutElevator(Elevator elevator){
-        if(this.isIn && this.wanted_floor == elevator.getFloor()){
+    public void goInElevator(Elevator[] elevators){
+        for(int i=0 ; i<elevators.length ; i++) {
+            Elevator elevator = elevators[i];
+            if (this.waiting && !elevator.isFull() && this.current_floor == elevator.getFloor()) {
+                Log.i("IN ",i+1+" "+ this.name + " AND requested " + this.wanted_floor);
+                elevator.add_person();
+                elevator.add_requested_floor(this.wanted_floor);
+                remove_request_elevators(elevators);
+                folks_elevator = elevator;
+                this.waiting = false;
+                this.isIn = true;
+            }
+        }
+    }
+
+    public void goOutElevator(){
+        Elevator elevator = folks_elevator;
+        if (this.isIn && this.wanted_floor == elevator.getFloor() && this.treated == false) {
             elevator.remove_person();
+            elevator.remove_requested_floor(this.wanted_floor);
             this.isIn = false;
             this.treated = true;
         }
