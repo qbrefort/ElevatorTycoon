@@ -11,7 +11,7 @@ import java.util.List;
 public class Elevator {
 
     private String id;
-    private final int capacity;
+    private int capacity;
     private int max_level;
     private int floor;
     private int nb_person_in;
@@ -51,6 +51,12 @@ public class Elevator {
 
     public void setId(String id){
         this.id = id;
+    }
+    public void addCapacity(){
+        this.capacity += 1;
+    }
+    public void setCapacity(int capacity){
+        this.capacity = capacity;
     }
 
     public String getId(){

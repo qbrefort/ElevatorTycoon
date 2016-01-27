@@ -1,5 +1,8 @@
 package com.pgm.qbr.elevatortycoon;
 
+import android.animation.Animator;
+import android.animation.AnimatorInflater;
+import android.animation.AnimatorSet;
 import android.animation.ObjectAnimator;
 import android.content.res.Resources;
 import android.graphics.Color;
@@ -13,10 +16,12 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,19 +29,19 @@ import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
-    public ImageView imageElevator;
-    public ImageView imageElevator2;
-    public ImageView imageFW1;
-    public ImageView imageFW2;
-    public ImageView imageFW3;
-    public ImageView imageFW4;
-    public ImageView imageFW5;
-    public ImageView imageFW6;
-    public ImageView imageFW7;
-    public ImageView imageFW8;
-    public ImageView imageFW9;
-    public ImageView imageFW10;
-    public ImageView imageFW11;
+    private ImageView imageElevator;
+    private ImageView imageElevator2;
+    private ImageView imageFW1;
+    private ImageView imageFW2;
+    private ImageView imageFW3;
+    private ImageView imageFW4;
+    private ImageView imageFW5;
+    private ImageView imageFW6;
+    private ImageView imageFW7;
+    private ImageView imageFW8;
+    private ImageView imageFW9;
+    private ImageView imageFW10;
+    private ImageView imageFW11;
 
     private TextView textViewl10;
     private TextView textViewl9;
@@ -51,18 +56,28 @@ public class MainActivity extends AppCompatActivity {
     private TextView textViewl0;
     private TextView textViewFolkIn;
     private TextView textViewFolkIn2;
+    private TextView textViewCash;
 
-    public List<ImageView> IV_folks;
-    public List<TextView> TV_folks;
-    public List<Folk> folks;
-    public Simulation simu;
-    public Elevator[] elevators;
-    public String[] folks_name;
+    private List<ImageView> IV_folks;
+    private List<TextView> TV_folks;
+    private List<Folk> folks;
+    private Simulation simu;
+    private Elevator[] elevators;
+    private String[] folks_name;
     private int iter;
 
     public void repaint(){
         set_image_elevator();
         set_image_Folk();
+    }
+
+    public void update_data(){
+        textViewCash = (TextView) findViewById(R.id.textViewCash);
+        textViewCash.setText(Integer.toString(simu.getCash()));
+        Animator animSet = AnimatorInflater.loadAnimator(this, R.animator.cahspop);
+        animSet.setTarget(textViewCash);
+        animSet.start();
+
     }
 
     public void set_image_elevator(){
@@ -111,10 +126,6 @@ public class MainActivity extends AppCompatActivity {
             IV_to_move.setLayoutParams(params);
             IV_to_move.setVisibility(View.INVISIBLE);
             IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
-
-            ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", off_set_X, off_set_X+100);
-            anim.setDuration(300);
-            //anim.start();
         }
         int nb_of_folk_waiting[] = new int[11];
         for (int i=0;i<nb_of_folk_waiting.length;i++){
@@ -125,13 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getWanted_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 0, 0));
-
-                ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", off_set_X, off_set_X + 100);
+                ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", off_set_X, off_set_X + 50);
                 anim.setDuration(300);
                 anim.start();
-                ObjectAnimator anim2 = ObjectAnimator.ofFloat(IV_to_move, "alpha", 0,1);
-                anim2.setDuration(300);
-                anim2.start();
             }
 
             if(folks.get(i).isWaiting()){
@@ -139,9 +146,6 @@ public class MainActivity extends AppCompatActivity {
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 IV_to_move.setBackgroundColor(Color.rgb(255, 255, 255));
-                ObjectAnimator anim = ObjectAnimator.ofFloat(IV_to_move, "translationX", -10, 10);
-                anim.setDuration(300);
-                //anim.start();
                 nb_of_folk_waiting[folks.get(i).getCurrent_floor()]++;
 
             }
@@ -161,25 +165,28 @@ public class MainActivity extends AppCompatActivity {
         resb.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MainActivity ma = MainActivity.this;
-                elevators = new Elevator[2];
-                elevators[0] = new Elevator(ma);elevators[0].setId("E1");
-                elevators[1] = new Elevator(ma);elevators[1].setId("E2");
-                elevators[1].setFloor(5);
-                folks = new ArrayList<>();
-                simu.setFolks(folks);
-                for(int i=0;i<10;i++){
-                    Random rand = new Random();
-                    int rr = rand.nextInt(30);
-                    simu.getFolks().add(new Folk(MainActivity.this, elevators, folks_name[rr]));
-                }
-
-                iter = 0;
-
-                simu = new Simulation(ma, folks, elevators);
-                repaint();
+                reset_init_simu();
             }
         });
+    }
+
+    public void reset_init_simu(){
+        MainActivity ma = MainActivity.this;
+
+        elevators = new Elevator[2];
+        elevators[0] = new Elevator(ma);elevators[0].setId("E1");
+        elevators[1] = new Elevator(ma);elevators[1].setId("E2");
+        elevators[1].setFloor(5);
+        folks = new ArrayList<>();
+        for(int i=0;i<10;i++){
+            Random rand = new Random();
+            int rr = rand.nextInt(30);
+            folks.add(new Folk(MainActivity.this, elevators, folks_name[rr]));
+        }
+
+        iter = 0;
+        simu = new Simulation(ma, folks, elevators);
+        repaint();
     }
 
     public void setOnClickListenerRun(){
@@ -205,6 +212,11 @@ public class MainActivity extends AppCompatActivity {
                                                 folks.remove(i);
                                             }
                                         }
+                                        Random rand = new Random();
+                                        int ran = rand.nextInt(25);
+                                        int test = rand.nextInt(100);
+                                        if(test>70)
+                                            folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
                                     }
                                 });
                             }
@@ -231,6 +243,29 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void setOnClickListenerUpdate(){
+        final Button buttonUpCapacity = (Button) findViewById(R.id.buttonUpCapacity);
+        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price()+")");
+
+        buttonUpCapacity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(simu.canAffordUpdateCapacity()){
+                    elevators[0].addCapacity();
+                    simu.updateCapacityPrice();
+                    buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price()+")");
+                    update_data();
+                }
+                else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                    toast.show();
+                }
+
+            }
+        });
+    }
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -238,26 +273,12 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        elevators = new Elevator[2];
-        elevators[0] = new Elevator(this);
-        elevators[1] = new Elevator(this);
-
-        Folk gerard = new Folk(this,elevators,"Gerard");
-        Folk jeanmich = new Folk(this,elevators,"JeanMich");
-        Folk ray = new Folk(this,elevators,"Raymond");
-
-        folks = new ArrayList<>();
-
-        folks.add(gerard);
-        folks.add(jeanmich);
-        folks.add(ray);
-
-        simu = new Simulation(this,folks,elevators);
-
-        iter = 0;
-
         Resources res = getResources();
         folks_name = res.getStringArray(R.array.names);
+
+
+
+
 
         imageFW1 = (ImageView) findViewById(R.id.imageFolkW1);
         imageFW2 = (ImageView) findViewById(R.id.imageFolkW2);
@@ -290,11 +311,18 @@ public class MainActivity extends AppCompatActivity {
         TV_folks = new ArrayList<>();
         TV_folks.add(textViewl0);TV_folks.add(textViewl1);TV_folks.add(textViewl2);TV_folks.add(textViewl3);TV_folks.add(textViewl4);TV_folks.add(textViewl5);TV_folks.add(textViewl6);TV_folks.add(textViewl7);TV_folks.add(textViewl8);TV_folks.add(textViewl9);TV_folks.add(textViewl10);
 
+        reset_init_simu();
+
+        elevators[1].setCapacity(0);
+
+        iter = 0;
+
         repaint();
 
         setOnClickListenerReset();
         setOnClickListenerRun();
         setOnClickListenerAddFolk();
+        setOnClickListenerUpdate();
 
     }
 

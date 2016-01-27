@@ -139,11 +139,11 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_marginLeft="280dp"
+        android:layout_marginLeft="230dp"
         android:layout_marginTop="20dp"
         android:layout_alignParentBottom="false"
 
-        >
+        android:id="@+id/linearLayout2">
 
         <TextView
             android:layout_width="wrap_content"
@@ -330,6 +330,67 @@ z
             android:id="@+id/textViewFolkIn2"
             />
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignTop="@+id/linearLayout2"
+        android:layout_toRightOf="@+id/linearLayout2"
+        android:layout_marginLeft="10dp"
+        android:layout_toEndOf="@+id/linearLayout2">
+
+
+
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="Cash:"
+                android:id="@+id/textView12" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="$ "
+                android:id="@+id/textViewCash2" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:text="0"
+                android:id="@+id/textViewCash" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CAP+1 ($)"
+            android:id="@+id/buttonUpCapacity" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Elevator"
+            android:id="@+id/buttonAddElevator" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Music"
+            android:id="@+id/button2" />
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

@@ -14,11 +14,16 @@ public class Simulation {
     private List<Folk> folks;
     private MainActivity mainActivity;
 
+    private int cash;
+    private int up_capacity_price;
+
     public Simulation(MainActivity ma, List<Folk> waiting_folk, Elevator[] elevators) {
         this.folks = waiting_folk;
         this.elevators = elevators;
         this.iteration = 0;
         this.mainActivity = ma;
+        this.cash = 0;
+        this.up_capacity_price = 50;
     }
 
     public List<Folk> getFolks() {
@@ -45,6 +50,8 @@ public class Simulation {
                     folks.get(i).goOutElevator();
                     if (folks.get(i).isTreated()) {
                         Log.i("OUT", folks.get(i).getName());
+                        operateCash(2);
+                        this.mainActivity.update_data();
                         this.mainActivity.repaint();
                         //folks.remove(i);
                     }
@@ -56,5 +63,30 @@ public class Simulation {
                 }
                 break;
         }
+    }
+
+    public int getCash() {
+        return cash;
+    }
+
+    public boolean canAffordUpdateCapacity(){
+        if(this.cash>= this.up_capacity_price)
+            return true;
+        else
+            return false;
+    }
+
+    public int getUp_capacity_price(){
+        return this.up_capacity_price;
+    }
+
+    public void updateCapacityPrice(){
+        this.cash -= this.up_capacity_price;
+        double res = this.up_capacity_price*1.2;
+        this.up_capacity_price = (int) res;
+    }
+
+    public void operateCash(int cash) {
+        this.cash += cash;
     }
 }
