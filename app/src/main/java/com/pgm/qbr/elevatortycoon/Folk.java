@@ -13,6 +13,7 @@ public class Folk {
     private String name;
     private int wanted_floor;
     private int current_floor;
+    private int time_waiting;
     private boolean waiting;
     private boolean isIn;
     private boolean treated;
@@ -30,6 +31,7 @@ public class Folk {
         this.waiting = true;
         this.isIn = false;
         this.treated = false;
+        this.time_waiting = 0;
         this.mainActivity = mA;
         this.request_elevators(elevators);
     }
@@ -44,6 +46,8 @@ public class Folk {
     public int getWanted_floor() {
         return wanted_floor;
     }
+    public void add_waiting_time(){ this.time_waiting++;}
+    public int getTime_waiting(){return this.time_waiting;}
 
     public void request_elevators(Elevator[] elevators){
         for(int i=0 ; i<elevators.length ; i++) {

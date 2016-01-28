@@ -1,9 +1,11 @@
 package com.pgm.qbr.elevatortycoon;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by qbr on 20/01/16.
@@ -17,8 +19,10 @@ public class Elevator {
     private int nb_person_in;
     private int[] floor_queue;
     private int algo;
+    private int maintenance;
     private MainActivity mainActivity;
-    private boolean going_up = true;
+    private boolean going_up;
+    private boolean working;
 
     public int[] getFloor_queue() {
         return floor_queue;
@@ -40,6 +44,9 @@ public class Elevator {
         this.max_level = 10;
         this.nb_person_in = 0;
         this.floor = 0;
+        this.going_up = true;
+        this.working = false;
+        this.maintenance = 0;
         this.floor_queue = new int[this.max_level+1];
         for (int i = 0 ;i<this.floor_queue.length; i++){
             this.floor_queue[i] = 0;
@@ -58,6 +65,10 @@ public class Elevator {
     public void setCapacity(int capacity){
         this.capacity = capacity;
     }
+    public void setWorking(boolean working){
+        this.working = working;
+    }
+    public boolean isWorking(){return this.working;}
 
     public String getId(){
         return this.id;
@@ -73,6 +84,11 @@ public class Elevator {
     public void setFloor(int floor){
         this.floor = floor;
     }
+
+    public int getMaintenance() {
+        return this.maintenance;
+    }
+    public void resetMaintenance(){this.maintenance =0;}
 
     public void add_person(){
         this.nb_person_in = this.nb_person_in + 1;
@@ -96,16 +112,17 @@ public class Elevator {
 
     public void move_to(int floor){
         //Log.i("Elevator",this.id+ " decided to move from" +this.floor+" to "+ floor);
-        this.floor = floor;
-        if (!this.isFull()) {
-            //TODO
-            //Not sure if this will work anytime + I need to remove from both elevators
-            //remove_requested_floor(floor);
+        if(this.working) {
+            this.floor = floor;
+            Random ran1 = new Random();
+            int maintenance_worse = ran1.nextInt(100);
+            if(maintenance_worse>50){
+                this.maintenance = this.maintenance+1;
+            }
         }
     }
 
     public void where_to_move(){
-
         switch (algo){
             case 1:
                 //Distance algo
