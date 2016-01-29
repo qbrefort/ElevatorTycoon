@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -12,10 +14,14 @@ import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -34,6 +40,10 @@ public class MainActivity extends AppCompatActivity {
     private Elevator[] elevators;
     private String[] folks_name;
     private int iter;
+
+    private Handler mHandler = new Handler();
+    private Handler mHandler2 = new Handler();
+
 
     public void repaint(){
         set_image_elevator();
@@ -185,6 +195,7 @@ public class MainActivity extends AppCompatActivity {
                                                 folks.remove(i);
                                             }
                                         }
+                                        onNotifyListenerPB();
                                         Random rand= new Random();
                                         int ran = rand.nextInt(25);
                                         int test = rand.nextInt(100);
@@ -255,6 +266,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setOnClickListenerElevator2(){
         final Button buttonElevator2 = (Button) findViewById(R.id.buttonAddElevator);
+        buttonElevator2.setText("E2 BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
         buttonElevator2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -268,17 +280,181 @@ public class MainActivity extends AppCompatActivity {
                         Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
                         toast.show();
                     }
-                }
-                else {
+                } else {
                     if (simu.canAffordRepair(1)) {
                         elevators[1].setWorking(true);
                         elevators[1].resetMaintenance();
                         buttonElevator2.setText("E2 CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
                         update_data();
-                    }
-                    else {
+                    } else {
                         buttonElevator2.setText("E2 BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
                     }
+                }
+            }
+        });
+    }
+
+    public void onNotifyListenerPB(){
+
+        final ProgressBar mProgress = (ProgressBar) findViewById(R.id.progressBarM1);
+
+        // Start lengthy operation in a background thread
+        new Thread(new Runnable() {
+            public void run() {
+
+                    // Update the progress bar
+                    mHandler.post(new Runnable() {
+                        public void run() {
+                            mProgress.setProgress(elevators[0].getMaintenance()*2);
+                        }
+                    });
+                }
+        }).start();
+
+        final ProgressBar mProgress2 = (ProgressBar) findViewById(R.id.progressBarM2);
+
+        // Start lengthy operation in a background thread
+        new Thread(new Runnable() {
+            public void run() {
+                // Update the progress bar
+                mHandler2.post(new Runnable() {
+                    public void run() {
+                        mProgress2.setProgress(elevators[1].getMaintenance()*2);
+                    }
+                });
+            }
+        }).start();
+
+    }
+
+    public void refreshSpinnerAlgoItem(){
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerAlgo);
+
+        List<String> categories = simu.getAlgoList();
+
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
+    }
+
+    public void refreshSpinnerMusicItem(){
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerMusic);
+
+        List<String> categories = simu.getMusicList();
+
+
+        // Creating adapter for spinner
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, categories);
+
+        // Drop down layout style - list view with radio button
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // attaching data adapter to spinner
+        spinner.setAdapter(dataAdapter);
+    }
+
+    public void addListenerSpinnerAlgo() {
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerAlgo);
+
+        refreshSpinnerAlgoItem();
+
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String sort_carac = parent.getItemAtPosition(position).toString();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    public void addListenerSpinnerMusic() {
+
+        Spinner spinner = (Spinner) findViewById(R.id.spinnerMusic);
+
+        refreshSpinnerMusicItem();
+        final MediaPlayer mp = new MediaPlayer();
+
+        final MediaPlayer[] mp_tab= new MediaPlayer[4];
+        mp_tab[0] = MediaPlayer.create(MainActivity.this,R.raw.jazzy);
+        mp_tab[1] = MediaPlayer.create(MainActivity.this,R.raw.refreshing);
+        mp_tab[2] = MediaPlayer.create(MainActivity.this,R.raw.bestm);
+        mp_tab[3] = MediaPlayer.create(MainActivity.this,R.raw.hey);
+
+        for(int i=0;i<mp_tab.length;i++){
+            mp_tab[i].setLooping(true);
+        }
+
+        // Spinner click listener
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                for(int i=0;i<4;i++){
+                    if(mp_tab[i].isPlaying())
+                        mp_tab[i].pause();
+                }
+                mp_tab[position].start();
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    public void setOnClickListenerAlgoButton(){
+
+        final String[] algo_tab = new String[3];
+        algo_tab[0] = "top bottom";
+        algo_tab[1] = "distance";
+        algo_tab[2] = "classic";
+
+        Button buttonAlgo = (Button) findViewById(R.id.buttonAlgo);
+        buttonAlgo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (simu.canAffordResearchAlgo()) {
+                    simu.addAlgoList(algo_tab[0]);
+                    refreshSpinnerAlgoItem();
+                }
+            }
+        });
+    }
+
+    public void setOnClickListenerMusicButton(){
+
+        final String[] music_tab = new String[4];
+
+        music_tab[0] = "Jazz";
+        music_tab[1] = "Refresh";
+        music_tab[2] = "Best";
+        music_tab[3] = "Hey";
+
+
+
+        Button buttonMusic = (Button) findViewById(R.id.buttonMusic);
+        buttonMusic.setOnClickListener(new View.OnClickListener() {
+            int i=0;
+            @Override
+            public void onClick(View v) {
+                if(simu.canAffordResearchMusic()){
+                    simu.addMusicList(music_tab[i]);
+                    refreshSpinnerMusicItem();
+                    i++;
                 }
             }
         });
@@ -328,11 +504,6 @@ public class MainActivity extends AppCompatActivity {
 
         reset_init_simu();
 
-        //TODO
-        //Broken elevator to repair
-
-
-
         iter = 0;
 
         repaint();
@@ -342,6 +513,11 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListenerAddFolk();
         setOnClickListenerUpdate();
         setOnClickListenerElevator2();
+        addListenerSpinnerAlgo();
+        setOnClickListenerAlgoButton();
+        addListenerSpinnerMusic();
+        setOnClickListenerMusicButton();
+
 
     }
 

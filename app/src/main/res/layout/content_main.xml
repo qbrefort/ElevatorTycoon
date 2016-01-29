@@ -377,23 +377,57 @@ z
             android:text="E1 CAP+1 ($)"
             android:id="@+id/buttonUpCapacity" />
 
+        <ProgressBar
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:progress="80"
+            android:indeterminate="false"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:progressDrawable="@drawable/maintenance_progress"
+            android:id="@+id/progressBarM1" />
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Add Elevator ($50)"
             android:id="@+id/buttonAddElevator" />
 
-        <Button
+        <ProgressBar
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Upgrade Algo"
-            android:id="@+id/buttonAlgo" />
+            android:layout_height="10dp"
+            android:indeterminate="false"
+            android:progress="10"
+            android:progressDrawable="@drawable/maintenance_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:id="@+id/progressBarM2" />
+
+
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="New Music"
-            android:id="@+id/button2" />
+            android:id="@+id/buttonMusic" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:prompt="@string/spinner_prompt"
+            android:id="@+id/spinnerMusic"
+            android:layout_gravity="center" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Research Algo"
+            android:id="@+id/buttonAlgo" />
+
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:prompt="@string/spinner_prompt"
+            android:id="@+id/spinnerAlgo"
+            android:layout_gravity="center" />
 
     </LinearLayout>
 

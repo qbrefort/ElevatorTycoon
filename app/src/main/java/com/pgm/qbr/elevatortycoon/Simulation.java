@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -21,6 +22,10 @@ public class Simulation {
     private int cash;
     private int[] up_capacity_price;
     private int[] repair_elevator_price;
+    private List<String> algoList;
+    private List<String> musicList;
+    private int algo_research_price;
+    private int algo_research_music_price;
 
     public Simulation(MainActivity ma, List<Folk> waiting_folk, Elevator[] elevators) {
         this.folks = waiting_folk;
@@ -28,8 +33,12 @@ public class Simulation {
         this.iteration = 0;
         this.mainActivity = ma;
         this.cash = 0;
+        this.algoList = new ArrayList<>();
+        this.musicList = new ArrayList<>();
         this.up_capacity_price = new int[2];up_capacity_price[0]=up_capacity_price[1]=50;
         this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=50;
+        this.algo_research_price = 50;
+        this.algo_research_music_price = 10;
     }
 
     public List<Folk> getFolks() {
@@ -67,7 +76,6 @@ public class Simulation {
                 buttonElevator2.setText("E2 BROKEN ($" + getRepair_elevator_price(1) + ")");
             }
             Toast toast = Toast.makeText(mainActivity,eleb+1+ " is BROKEN!", Toast.LENGTH_SHORT);
-
             toast.show();
         }
     }
@@ -102,6 +110,21 @@ public class Simulation {
         }
     }
 
+    public List<String> getAlgoList() {
+        return algoList;
+    }
+    public List<String> getMusicList() {
+        return musicList;
+    }
+
+    public void addAlgoList(String item) {
+        this.algoList.add(item);
+    }
+
+    public void addMusicList(String item) {
+        this.musicList.add(item);
+    }
+
     public int getCash() {
         return this.cash;
     }
@@ -122,6 +145,28 @@ public class Simulation {
     public boolean canAffordUpdateCapacity(int i){
         if(this.cash>= this.up_capacity_price[i])
             return true;
+        else
+            return false;
+
+    }
+
+    public boolean canAffordResearchAlgo(){
+        if(this.cash>= this.algo_research_price){
+            this.cash -= this.algo_research_price;
+            return true;
+        }
+
+        else
+            return false;
+
+    }
+
+    public boolean canAffordResearchMusic(){
+        if(this.cash>= this.algo_research_music_price){
+            this.cash -= this.algo_research_music_price;
+            return true;
+        }
+
         else
             return false;
 
