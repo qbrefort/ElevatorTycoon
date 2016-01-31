@@ -59,21 +59,21 @@ public class Simulation {
         double mf1 = elevators[0].getMaintenance()*5.0;
         double mf2 = elevators[1].getMaintenance()*5.0;
 
-        repair_elevator_price[0] = elevators[0].getMaintenance();
-        repair_elevator_price[1] = elevators[1].getMaintenance();
+        repair_elevator_price[0] = (int) mf1;
+        repair_elevator_price[1] = (int) mf2;
 
         Random rand = new Random();
         int test_broke = rand.nextInt(100);
-        if (test_broke > 95){
+        if (test_broke > 98){
             int eleb= rand.nextInt(2);
             elevators[eleb].setWorking(false);
             if(eleb==0){
                 Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
-                buttonUpCapacity.setText("E1 BROKEN ($" + getRepair_elevator_price(0) + ")");
+                buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
             }
             if(eleb==1){
-                Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonAddElevator);
-                buttonElevator2.setText("E2 BROKEN ($" + getRepair_elevator_price(1) + ")");
+                Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
+                buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
             }
             Toast toast = Toast.makeText(mainActivity,eleb+1+ " is BROKEN!", Toast.LENGTH_SHORT);
             toast.show();
@@ -95,7 +95,7 @@ public class Simulation {
                     if (folks.get(i).isTreated()) {
                         Log.i("OUT", folks.get(i).getName());
                         operateCash_by_time_waiting(folks.get(i));
-                        this.mainActivity.update_data();
+                        this.mainActivity.update_cashflow_and_repaint_button();
                         this.mainActivity.repaint();
                         //folks.remove(i);
                     }
@@ -170,6 +170,15 @@ public class Simulation {
         else
             return false;
 
+    }
+
+    public boolean canAffordMaintainReset(int i){
+        if(this.cash>= elevators[i].getMaintenance()) {
+            this.cash -= elevators[i].getMaintenance();
+            return true;
+        }
+        else
+            return false;
     }
 
     public int getUp_capacity_price(int i){

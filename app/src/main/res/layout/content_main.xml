@@ -346,7 +346,10 @@ z
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="12dp">
 
             <TextView
                 android:layout_width="wrap_content"
@@ -371,41 +374,110 @@ z
 
         </LinearLayout>
 
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:text="E1"/>
+
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_gravity="right"
+            android:layout_height="wrap_content">
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/buttonSize"
+                android:text="CAP+1 ($)"
+                android:id="@+id/buttonUpCapacity" />
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/buttonSize"
+                android:text="Maintain ($)"
+                android:id="@+id/buttonME1" />
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+                android:progress="0"
+                android:indeterminate="false"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:progressDrawable="@drawable/maintenance_progress"
+                android:id="@+id/progressBarM1" />
+
+        </LinearLayout>
+
+
+
+    </LinearLayout>
+
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp">
+        >
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="20dp"
+            android:text="E2"/>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_gravity="right"
+            android:layout_height="wrap_content">
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/buttonSize"
+                android:text="Add Elevator ($50)"
+                android:id="@+id/buttonElevator2" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/buttonSize"
+                android:text="Maintain ($)"
+                android:id="@+id/buttonME2" />
+
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="10dp"
+
+                android:indeterminate="false"
+                android:progress="0"
+                android:progressDrawable="@drawable/maintenance_progress"
+                style="@android:style/Widget.ProgressBar.Horizontal"
+                android:id="@+id/progressBarM2" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="E1 CAP+1 ($)"
-            android:id="@+id/buttonUpCapacity" />
-
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:progress="80"
-            android:indeterminate="false"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:progressDrawable="@drawable/maintenance_progress"
-            android:id="@+id/progressBarM1" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Elevator ($50)"
-            android:id="@+id/buttonAddElevator" />
-
-        <ProgressBar
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:indeterminate="false"
-            android:progress="10"
-            android:progressDrawable="@drawable/maintenance_progress"
-            style="@android:style/Widget.ProgressBar.Horizontal"
-            android:id="@+id/progressBarM2" />
-
-
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:textSize="@dimen/buttonSize"
             android:text="New Music"
             android:id="@+id/buttonMusic" />
 
@@ -413,12 +485,14 @@ z
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:prompt="@string/spinner_prompt"
+            android:textSize="@dimen/buttonSize"
             android:id="@+id/spinnerMusic"
-            android:layout_gravity="center" />
+            android:layout_gravity="right" />
 
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textSize="@dimen/buttonSize"
             android:text="Research Algo"
             android:id="@+id/buttonAlgo" />
 
@@ -426,8 +500,9 @@ z
             android:layout_width="wrap_content"
             android:layout_height="50dp"
             android:prompt="@string/spinner_prompt"
+            android:textSize="@dimen/buttonSize"
             android:id="@+id/spinnerAlgo"
-            android:layout_gravity="center" />
+            android:layout_gravity="right" />
 
     </LinearLayout>
 

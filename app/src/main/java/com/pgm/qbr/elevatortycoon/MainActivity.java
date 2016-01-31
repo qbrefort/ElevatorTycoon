@@ -50,12 +50,20 @@ public class MainActivity extends AppCompatActivity {
         set_image_Folk();
     }
 
-    public void update_data(){
+    public void update_cashflow_and_repaint_button(){
         TextView textViewCash = (TextView) findViewById(R.id.textViewCash);
         textViewCash.setText(Integer.toString(simu.getCash()));
+
+        Button buttonME1 = (Button) findViewById(R.id.buttonME1);
+        Button buttonME2 = (Button) findViewById(R.id.buttonME2);
+        buttonME1.setText("Maintain ($"+elevators[0].getMaintenance()+")");
+        buttonME2.setText("Maintain ($"+elevators[1].getMaintenance()+")");
+
         Animator animSet = AnimatorInflater.loadAnimator(this, R.animator.cahspop);
         animSet.setTarget(textViewCash);
         animSet.start();
+
+
 
     }
 
@@ -119,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             if(folks.get(i).isWaiting()){
-                Log.i("Waiting", folks.get(i).getName() + " ON " + folks.get(i).getCurrent_floor());
+                //Log.i("Waiting", folks.get(i).getName() + " ON " + folks.get(i).getCurrent_floor());
                 ImageView IV_to_move = IV_folks.get(folks.get(i).getCurrent_floor());
                 IV_to_move.setVisibility(View.VISIBLE);
                 nb_of_folk_waiting[folks.get(i).getCurrent_floor()]++;
@@ -169,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
         iter = 0;
         simu = new Simulation(ma, folks, elevators);
         repaint();
-        update_data();
+        update_cashflow_and_repaint_button();
     }
 
     public void setOnClickListenerRun(){
@@ -178,7 +186,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                new Thread(new Runnable() {
+                Thread myT = new Thread(new Runnable() {
                     public void run() {
                         try {
                             while (folks.size()>0) {
@@ -199,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                                         Random rand= new Random();
                                         int ran = rand.nextInt(25);
                                         int test = rand.nextInt(100);
-                                        if(test>80)
+                                        if(test>60)
                                             folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
 
                                     }
@@ -208,8 +216,8 @@ public class MainActivity extends AppCompatActivity {
                         } catch (InterruptedException e) {
                         }
                     }
-                }).start();
-
+                });
+            myT.start();
             }
         });
     }
@@ -230,7 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void setOnClickListenerUpdate(){
         final Button buttonUpCapacity = (Button) findViewById(R.id.buttonUpCapacity);
-        buttonUpCapacity.setText("E1 CAP+1 ($"+simu.getUp_capacity_price(1)+")");
+        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price(1)+")");
 
         buttonUpCapacity.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -239,8 +247,8 @@ public class MainActivity extends AppCompatActivity {
                     if(simu.canAffordUpdateCapacity(1)){
                         elevators[0].addCapacity();
                         simu.updateCapacityPrice(1);
-                        buttonUpCapacity.setText("E1 CAP+1 ($"+simu.getUp_capacity_price(1)+")");
-                        update_data();
+                        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price(1)+")");
+                        update_cashflow_and_repaint_button();
                     }
                     else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
@@ -251,11 +259,11 @@ public class MainActivity extends AppCompatActivity {
                     if (simu.canAffordRepair(0)) {
                         elevators[0].setWorking(true);
                         elevators[0].resetMaintenance();
-                        buttonUpCapacity.setText("E1 CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
-                        update_data();
+                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
+                        update_cashflow_and_repaint_button();
                     }
                     else {
-                        buttonUpCapacity.setText("E1 BROKEN ($" + simu.getRepair_elevator_price(0) + ")");
+                        buttonUpCapacity.setText("BROKEN ($" + simu.getRepair_elevator_price(0) + ")");
                     }
                 }
 
@@ -265,8 +273,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setOnClickListenerElevator2(){
-        final Button buttonElevator2 = (Button) findViewById(R.id.buttonAddElevator);
-        buttonElevator2.setText("E2 BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+        final Button buttonElevator2 = (Button) findViewById(R.id.buttonElevator2);
+        buttonElevator2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
         buttonElevator2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -274,8 +282,8 @@ public class MainActivity extends AppCompatActivity {
                     if (simu.canAffordUpdateCapacity(1)) {
                         elevators[1].addCapacity();
                         simu.updateCapacityPrice(1);
-                        buttonElevator2.setText("E2 CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
-                        update_data();
+                        buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
+                        update_cashflow_and_repaint_button();
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
                         toast.show();
@@ -284,10 +292,10 @@ public class MainActivity extends AppCompatActivity {
                     if (simu.canAffordRepair(1)) {
                         elevators[1].setWorking(true);
                         elevators[1].resetMaintenance();
-                        buttonElevator2.setText("E2 CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
-                        update_data();
+                        buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
+                        update_cashflow_and_repaint_button();
                     } else {
-                        buttonElevator2.setText("E2 BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+                        buttonElevator2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
                     }
                 }
             }
@@ -460,6 +468,32 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public void setOnClickListenerMaintainButton(){
+
+
+        Button buttonME1 = (Button) findViewById(R.id.buttonME1);
+        buttonME1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (simu.canAffordMaintainReset(0)) {
+                    elevators[0].resetMaintenance();
+                    update_cashflow_and_repaint_button();
+                }
+            }
+        });
+
+        Button buttonME2 = (Button) findViewById(R.id.buttonME2);
+        buttonME2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (simu.canAffordMaintainReset(1)) {
+                    elevators[1].resetMaintenance();
+                    update_cashflow_and_repaint_button();
+                }
+            }
+        });
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -517,6 +551,7 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListenerAlgoButton();
         addListenerSpinnerMusic();
         setOnClickListenerMusicButton();
+        setOnClickListenerMaintainButton();
 
 
     }

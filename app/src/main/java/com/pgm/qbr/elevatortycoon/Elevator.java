@@ -20,6 +20,7 @@ public class Elevator {
     private int[] floor_queue;
     private int algo;
     private int maintenance;
+    private int maintenance_prob;
     private MainActivity mainActivity;
     private boolean going_up;
     private boolean working;
@@ -47,6 +48,7 @@ public class Elevator {
         this.going_up = true;
         this.working = false;
         this.maintenance = 0;
+        this.maintenance_prob = 0;
         this.floor_queue = new int[this.max_level+1];
         for (int i = 0 ;i<this.floor_queue.length; i++){
             this.floor_queue[i] = 0;
@@ -115,8 +117,9 @@ public class Elevator {
         if(this.working) {
             this.floor = floor;
             Random ran1 = new Random();
-            int maintenance_worse = ran1.nextInt(100);
-            if(maintenance_worse>50){
+            double iter = 0.0;
+            int maintenance_worse = probCauchy(iter);
+            if(maintenance_worse>70){
                 this.maintenance = this.maintenance+1;
             }
         }
@@ -230,6 +233,14 @@ public class Elevator {
         }
 
 
+    }
+
+    public int probCauchy(double x){
+        double x0 = 5;
+        double a = 5;
+        double res = 1/Math.PI*Math.atan((x-x0)/a) + 0.5;
+        res*=100;
+        return (int) res;
     }
 
     public boolean isFull(){
