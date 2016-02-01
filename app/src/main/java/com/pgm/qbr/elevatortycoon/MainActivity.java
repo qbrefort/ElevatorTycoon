@@ -460,7 +460,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if(simu.canAffordResearchMusic()){
-                    simu.addMusicList(music_tab[i]);
+                    if(i<4)
+                        simu.addMusicList(music_tab[i]);
                     refreshSpinnerMusicItem();
                     i++;
                 }
