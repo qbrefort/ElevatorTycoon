@@ -118,10 +118,14 @@ public class Elevator {
             this.floor = floor;
             Random ran1 = new Random();
             double iter = 0.0;
-            int maintenance_worse = probCauchy(iter);
-            if(maintenance_worse>70){
+            int maintenance_worse = ran1.nextInt(100);
+
+            if(maintenance_worse < probCauchy(iter)){
                 this.maintenance = this.maintenance+1;
+                iter = 0;
             }
+            else
+                iter++;
         }
     }
 
@@ -138,14 +142,12 @@ public class Elevator {
                         tmp_list.add(i);
                     }
                 }
-                List<Double> distance = new ArrayList<>();
                 double best_dist = go;
                 for(int i=0; i <tmp_list.size(); i++){
 
                     double temp = Math.abs(- this.floor + tmp_list.get(i));
                     int pond_floor = this.floor_queue[tmp_list.get(i)];
 
-                    distance.add(temp);
                     Log.i("Distance",Double.toString(temp));
                     if(temp  < best_dist ){
                         best_dist = temp;
@@ -224,9 +226,45 @@ public class Elevator {
 
                 if(got_to!=this.floor){
                     if(this.going_up)
-                        move_to(this.floor+1);
+                        move_to(got_to);
                     else
-                        move_to(this.floor-1);
+                        move_to(got_to);
+                }
+            case 4:
+                print_Floor_queue();
+                List<Integer> tmp_list4 = new ArrayList<>();
+                tmp_list4.clear();
+                for(int i=0;i<this.floor_queue.length;i++){
+                    if(this.floor_queue[i] > 0){
+                        tmp_list4.add(i);
+                    }
+                }
+                got_to = this.floor;
+
+                if(going_up){
+                    for(int i=tmp_list4.size() - 1; i >= 0; i--){
+                        if(tmp_list4.get(i)>this.floor){
+                            got_to = tmp_list4.get(i);
+                        }
+                    }
+                    if(got_to == this.floor)
+                        this.going_up = !going_up;
+                }
+                else {
+                    for(int i=0; i < tmp_list4.size(); i++){
+                        if(tmp_list4.get(i) < this.floor){
+                            got_to = tmp_list4.get(i);
+                        }
+                    }
+                    if(got_to == this.floor)
+                        this.going_up = !going_up;
+                }
+
+                if(got_to!=this.floor){
+                    if(this.going_up)
+                        move_to(this.floor++);
+                    else
+                        move_to(this.floor--);
                 }
 
 

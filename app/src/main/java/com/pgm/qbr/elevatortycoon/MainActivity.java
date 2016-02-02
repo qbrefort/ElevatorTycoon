@@ -204,11 +204,14 @@ public class MainActivity extends AppCompatActivity {
                                             }
                                         }
                                         onNotifyListenerPB();
-                                        Random rand= new Random();
-                                        int ran = rand.nextInt(25);
-                                        int test = rand.nextInt(100);
-                                        if(test>60)
-                                            folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
+                                        if(iter==0){
+                                            Random rand= new Random();
+                                            int ran = rand.nextInt(25);
+                                            int test = rand.nextInt(100);
+                                            if(test>60)
+                                                folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
+                                        }
+
 
                                     }
                                 });
@@ -553,7 +556,6 @@ public class MainActivity extends AppCompatActivity {
         addListenerSpinnerMusic();
         setOnClickListenerMusicButton();
         setOnClickListenerMaintainButton();
-
 
     }
 
