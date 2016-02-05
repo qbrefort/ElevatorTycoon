@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private Simulation simu;
     private Elevator[] elevators;
     private String[] folks_name;
+    private MediaPlayer[] mp_tab= new MediaPlayer[4];
     private int iter;
 
     private Handler mHandler = new Handler();
@@ -176,6 +177,18 @@ public class MainActivity extends AppCompatActivity {
 
         iter = 0;
         simu = new Simulation(ma, folks, elevators);
+
+        setOnClickListenerReset();
+        setOnClickListenerRun();
+        setOnClickListenerAddFolk();
+        setOnClickListenerUpdate();
+        setOnClickListenerElevator2();
+        addListenerSpinnerAlgo();
+        setOnClickListenerAlgoButton();
+        addListenerSpinnerMusic();
+        setOnClickListenerMusicButton();
+        setOnClickListenerMaintainButton();
+
         repaint();
         update_cashflow_and_repaint_button();
     }
@@ -247,25 +260,22 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (elevators[0].isWorking()) {
-                    if(simu.canAffordUpdateCapacity(1)){
+                    if (simu.canAffordUpdateCapacity(1)) {
                         elevators[0].addCapacity();
                         simu.updateCapacityPrice(1);
-                        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price(1)+")");
+                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
                         update_cashflow_and_repaint_button();
-                    }
-                    else {
+                    } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
                         toast.show();
                     }
-                }
-                else {
+                } else {
                     if (simu.canAffordRepair(0)) {
                         elevators[0].setWorking(true);
                         elevators[0].resetMaintenance();
                         buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
                         update_cashflow_and_repaint_button();
-                    }
-                    else {
+                    } else {
                         buttonUpCapacity.setText("BROKEN ($" + simu.getRepair_elevator_price(0) + ")");
                     }
                 }
@@ -396,17 +406,18 @@ public class MainActivity extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spinnerMusic);
 
         refreshSpinnerMusicItem();
-        final MediaPlayer mp = new MediaPlayer();
 
-        final MediaPlayer[] mp_tab= new MediaPlayer[4];
+        for(int i=0;i<mp_tab.length;i++){
+            if(mp_tab[i]!=null){
+                mp_tab[i].pause();
+            }
+        }
+
         mp_tab[0] = MediaPlayer.create(MainActivity.this,R.raw.jazzy);
         mp_tab[1] = MediaPlayer.create(MainActivity.this,R.raw.refreshing);
         mp_tab[2] = MediaPlayer.create(MainActivity.this,R.raw.bestm);
         mp_tab[3] = MediaPlayer.create(MainActivity.this,R.raw.hey);
 
-        for(int i=0;i<mp_tab.length;i++){
-            mp_tab[i].setLooping(true);
-        }
 
         // Spinner click listener
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -535,7 +546,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         IV_folks = new ArrayList<>();
-        IV_folks.add(imageFW1);IV_folks.add(imageFW2);IV_folks.add(imageFW3);IV_folks.add(imageFW4);IV_folks.add(imageFW5);IV_folks.add(imageFW6);IV_folks.add(imageFW7);IV_folks.add(imageFW8);IV_folks.add(imageFW9);IV_folks.add(imageFW10);IV_folks.add(imageFW11);
+        IV_folks.add(imageFW1);IV_folks.add(imageFW2);IV_folks.add(imageFW3);IV_folks.add(imageFW4);IV_folks.add(imageFW5);IV_folks.add(imageFW6);IV_folks.add(imageFW7);
+        IV_folks.add(imageFW8);
+        IV_folks.add(imageFW9);
+        IV_folks.add(imageFW10);IV_folks.add(imageFW11);
 
         TV_folks = new ArrayList<>();
         TV_folks.add(textViewl0);TV_folks.add(textViewl1);TV_folks.add(textViewl2);TV_folks.add(textViewl3);TV_folks.add(textViewl4);TV_folks.add(textViewl5);TV_folks.add(textViewl6);TV_folks.add(textViewl7);TV_folks.add(textViewl8);TV_folks.add(textViewl9);TV_folks.add(textViewl10);
@@ -546,16 +560,7 @@ public class MainActivity extends AppCompatActivity {
 
         repaint();
 
-        setOnClickListenerReset();
-        setOnClickListenerRun();
-        setOnClickListenerAddFolk();
-        setOnClickListenerUpdate();
-        setOnClickListenerElevator2();
-        addListenerSpinnerAlgo();
-        setOnClickListenerAlgoButton();
-        addListenerSpinnerMusic();
-        setOnClickListenerMusicButton();
-        setOnClickListenerMaintainButton();
+
 
     }
 

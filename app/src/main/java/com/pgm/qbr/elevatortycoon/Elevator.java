@@ -119,7 +119,6 @@ public class Elevator {
             Random ran1 = new Random();
             double iter = 0.0;
             int maintenance_worse = ran1.nextInt(100);
-
             if(maintenance_worse < probCauchy(iter)){
                 this.maintenance = this.maintenance+1;
                 iter = 0;
@@ -223,13 +222,9 @@ public class Elevator {
                     if(got_to == this.floor)
                         this.going_up = !going_up;
                 }
+                move_to(got_to);
+                break;
 
-                if(got_to!=this.floor){
-                    if(this.going_up)
-                        move_to(got_to);
-                    else
-                        move_to(got_to);
-                }
             case 4:
                 print_Floor_queue();
                 List<Integer> tmp_list4 = new ArrayList<>();
@@ -266,6 +261,7 @@ public class Elevator {
                     else
                         move_to(this.floor--);
                 }
+                break;
 
 
         }
