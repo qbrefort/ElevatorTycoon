@@ -27,6 +27,8 @@ public class Simulation {
     private int algo_research_price;
     private int algo_research_music_price;
 
+    private int prob_broken;
+
     public Simulation(MainActivity ma, List<Folk> waiting_folk, Elevator[] elevators) {
         this.folks = waiting_folk;
         this.elevators = elevators;
@@ -39,6 +41,7 @@ public class Simulation {
         this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=50;
         this.algo_research_price = 50;
         this.algo_research_music_price = 10;
+        this.prob_broken = 0;
     }
 
     public List<Folk> getFolks() {
@@ -62,21 +65,24 @@ public class Simulation {
         repair_elevator_price[0] = (int) mf1;
         repair_elevator_price[1] = (int) mf2;
 
-        Random rand = new Random();
-        int test_broke = rand.nextInt(100);
-        if (test_broke > 98){
-            int eleb= rand.nextInt(2);
-            elevators[eleb].setWorking(false);
-            if(eleb==0){
-                Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
-                buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
+        for(int i=0;i<elevators.length;i++){
+            Random rand = new Random();
+            int test_broke = rand.nextInt(100);
+
+            if(test_broke < this.probCauchy(elevators[i].getMaintenance())) {
+                elevators[i].setWorking(false);
+                if(i==0){
+                    Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
+                    buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
+                }
+                if(i==1){
+                    Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
+                    buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
+                }
+                Toast toast = Toast.makeText(mainActivity,i+1+ " is BROKEN!", Toast.LENGTH_SHORT);
+                toast.show();
             }
-            if(eleb==1){
-                Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
-                buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
-            }
-            Toast toast = Toast.makeText(mainActivity,eleb+1+ " is BROKEN!", Toast.LENGTH_SHORT);
-            toast.show();
+
         }
     }
 
@@ -200,5 +206,13 @@ public class Simulation {
         double time = (double) folk.getTime_waiting();
         int cash_to_add = (int) (50/time);
         this.cash += cash_to_add;
+    }
+
+    public int probCauchy(double x){
+        double x0 = 20;
+        double a = 2;
+        double res = 1/Math.PI*Math.atan((x-x0)/a) + 0.5;
+        res*=100;
+        return (int) res;
     }
 }
