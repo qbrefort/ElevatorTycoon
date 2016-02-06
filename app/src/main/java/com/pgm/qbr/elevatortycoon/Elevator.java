@@ -117,14 +117,13 @@ public class Elevator {
         if(this.working) {
             this.floor = floor;
             Random ran1 = new Random();
-            double iter = 0.0;
             int maintenance_worse = ran1.nextInt(100);
-            if(maintenance_worse < probCauchy(iter)){
+            if(maintenance_worse < probCauchy(maintenance_prob)){
                 this.maintenance = this.maintenance+1;
-                iter = 0;
+                maintenance_prob = 0;
             }
             else
-                iter++;
+                maintenance_prob++;
         }
     }
 
