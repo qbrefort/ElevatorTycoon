@@ -23,10 +23,10 @@ public class Folk {
     public Folk(MainActivity mA, Elevator[] elevators,String name) {
         Random rand = new Random();
         this.name = name;
-        this.wanted_floor =  rand.nextInt(11);
-        this.current_floor =  rand.nextInt(11);
+        this.wanted_floor =  rand.nextInt(elevators[0].getMax_level()+1);
+        this.current_floor =  rand.nextInt(elevators[0].getMax_level()+1);
         while (this.current_floor == this.wanted_floor){
-            this.wanted_floor = rand.nextInt(11);
+            this.wanted_floor = rand.nextInt(elevators[0].getMax_level()+1);
         }
         this.waiting = true;
         this.isIn = false;

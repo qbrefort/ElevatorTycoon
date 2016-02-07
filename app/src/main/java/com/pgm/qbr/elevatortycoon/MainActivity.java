@@ -10,7 +10,6 @@ import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -162,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         elevators[0] = new Elevator(ma);elevators[0].setId("E1");
         elevators[1] = new Elevator(ma);elevators[1].setId("E2");
         elevators[1].setFloor(5);
+        elevators[1].setMaintenance(100);
         folks = new ArrayList<>();
         for(int i=0;i<10;i++){
             Random rand = new Random();
@@ -221,7 +221,17 @@ public class MainActivity extends AppCompatActivity {
                                             Random rand= new Random();
                                             int ran = rand.nextInt(25);
                                             int test = rand.nextInt(100);
-                                            if(test>60)
+                                            if(test<elevators[0].getMax_level()*12)
+                                                folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
+                                            int fw=0;
+                                            for(Folk f:folks){
+                                                if(f.isWaiting())   fw++;
+                                            }
+                                            if(fw<3)
+                                                folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
+                                            if(fw<2)
+                                                folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
+                                            if(fw<1)
                                                 folks.add(new Folk(MainActivity.this,elevators,folks_name[ran]));
                                         }
 
@@ -272,11 +282,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (simu.canAffordRepair(0)) {
                         elevators[0].setWorking(true);
-                        elevators[0].resetMaintenance();
+                        elevators[0].setMaintenance((int)( elevators[0].getMaintenance()*0.8));
                         buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
                         update_cashflow_and_repaint_button();
                     } else {
                         buttonUpCapacity.setText("BROKEN ($" + simu.getRepair_elevator_price(0) + ")");
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
 
@@ -304,11 +316,13 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (simu.canAffordRepair(1)) {
                         elevators[1].setWorking(true);
-                        elevators[1].resetMaintenance();
+                        elevators[0].setMaintenance((int)( elevators[0].getMaintenance()*0.8));
                         buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
                         update_cashflow_and_repaint_button();
                     } else {
                         buttonElevator2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
                     }
                 }
             }

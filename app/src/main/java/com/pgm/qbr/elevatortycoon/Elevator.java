@@ -28,6 +28,9 @@ public class Elevator {
     public int[] getFloor_queue() {
         return floor_queue;
     }
+    public int getMax_level() {
+        return max_level;
+    }
     public int getNb_person_in(){ return nb_person_in; }
     public int getCapacity() { return capacity;}
     public void print_Floor_queue(){
@@ -37,12 +40,12 @@ public class Elevator {
                 queue=queue+i+" ";
             }
         }
-        Log.i("Queue",this.id+" "+queue);
+        //Log.i("Queue",this.id+" "+queue);
     }
 
     public Elevator(MainActivity ma) {
         this.capacity = 3;
-        this.max_level = 10;
+        this.max_level = 8;
         this.nb_person_in = 0;
         this.floor = 0;
         this.going_up = true;
@@ -91,6 +94,7 @@ public class Elevator {
         return this.maintenance;
     }
     public void resetMaintenance(){this.maintenance =0;}
+    public void setMaintenance(int m){this.maintenance = m;}
 
     public void add_person(){
         this.nb_person_in = this.nb_person_in + 1;
@@ -146,11 +150,11 @@ public class Elevator {
                     double temp = Math.abs(- this.floor + tmp_list.get(i));
                     int pond_floor = this.floor_queue[tmp_list.get(i)];
 
-                    Log.i("Distance",Double.toString(temp));
+                    //Log.i("Distance",Double.toString(temp));
                     if(temp  < best_dist ){
                         best_dist = temp;
                         go = tmp_list.get(i);
-                        Log.i("Distance chosen",Double.toString(temp));
+                        //Log.i("Distance chosen",Double.toString(temp));
                     }
                 }
                 if(go!=20) {
@@ -209,8 +213,14 @@ public class Elevator {
                             got_to = tmp_list3.get(i);
                         }
                     }
-                    if(got_to == this.floor)
+                    if(got_to == this.floor){
                         this.going_up = !going_up;
+                        for(int i=0; i < tmp_list3.size(); i++) {
+                            if (tmp_list3.get(i) < this.floor) {
+                                got_to = tmp_list3.get(i);
+                            }
+                        }
+                    }
                 }
                 else {
                     for(int i=0; i < tmp_list3.size(); i++){
@@ -218,8 +228,14 @@ public class Elevator {
                             got_to = tmp_list3.get(i);
                         }
                     }
-                    if(got_to == this.floor)
+                    if(got_to == this.floor) {
                         this.going_up = !going_up;
+                        for(int i=tmp_list3.size() - 1; i >= 0; i--) {
+                            if (tmp_list3.get(i) > this.floor) {
+                                got_to = tmp_list3.get(i);
+                            }
+                        }
+                    }
                 }
                 move_to(got_to);
                 break;
@@ -278,7 +294,7 @@ public class Elevator {
 
     public boolean isFull(){
         if(this.nb_person_in >= this.capacity){
-            Log.i("Elevator",this.id+" is full");
+            //Log.i("Elevator",this.id+" is full");
             return true;
         }
         else

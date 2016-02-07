@@ -38,7 +38,7 @@ public class Simulation {
         this.algoList = new ArrayList<>();
         this.musicList = new ArrayList<>();
         this.up_capacity_price = new int[2];up_capacity_price[0]=up_capacity_price[1]=50;
-        this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=50;
+        this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=500;
         this.algo_research_price = 50;
         this.algo_research_music_price = 10;
         this.prob_broken = 0;
@@ -209,9 +209,9 @@ public class Simulation {
     }
 
     public int probCauchy(double x){
-        double x0 = 20;
+        double x0 = 40;
         double a = 2;
-        double res = 1/Math.PI*Math.atan((x-x0)/a) + 0.5;
+        double res = 1.0/Math.PI*Math.atan((x-x0)/a) + 0.5;
         res*=100;
         return (int) res;
     }
