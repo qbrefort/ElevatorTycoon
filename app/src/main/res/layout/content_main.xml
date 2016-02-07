@@ -333,7 +333,7 @@ z
 
     <LinearLayout
         android:orientation="vertical"
-        android:layout_width="120dp"
+        android:layout_width="135dp"
         android:layout_height="match_parent"
         android:layout_alignTop="@+id/linearLayout2"
         android:layout_alignParentRight="true"

@@ -59,30 +59,29 @@ public class Simulation {
 
         //Update price of repair
 
-        double mf1 = elevators[0].getMaintenance()*5.0;
-        double mf2 = elevators[1].getMaintenance()*5.0;
-
-        repair_elevator_price[0] = (int) mf1;
-        repair_elevator_price[1] = (int) mf2;
-
         for(int i=0;i<elevators.length;i++){
-            Random rand = new Random();
-            int test_broke = rand.nextInt(100);
+            if(elevators[i].isWorking()){
 
-            if(test_broke < this.probCauchy(elevators[i].getMaintenance())) {
-                elevators[i].setWorking(false);
-                if(i==0){
-                    Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
-                    buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
+                double mf1 = elevators[i].getMaintenance()*5.0;
+                repair_elevator_price[i] = (int) mf1;
+
+                Random rand = new Random();
+                int test_broke = rand.nextInt(100);
+
+                if(test_broke < this.probCauchy(elevators[i].getMaintenance())) {
+                    elevators[i].setWorking(false);
+                    if(i==0){
+                        Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
+                        buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
+                    }
+                    if(i==1){
+                        Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
+                        buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
+                    }
+                    Toast toast = Toast.makeText(mainActivity,i+1+ " is BROKEN!", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
-                if(i==1){
-                    Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
-                    buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
-                }
-                Toast toast = Toast.makeText(mainActivity,i+1+ " is BROKEN!", Toast.LENGTH_SHORT);
-                toast.show();
             }
-
         }
     }
 
