@@ -61,6 +61,10 @@ public class Simulation {
         for(int i=0;i<elevators.length;i++){
 
             if(elevators[i].isWorking()){
+
+                double mf1 = elevators[i].getMaintenance()*5.0;
+                repair_elevator_price[i] = (int) mf1;
+
                 Random rand = new Random();
                 int test_broke = rand.nextInt(100);
 
