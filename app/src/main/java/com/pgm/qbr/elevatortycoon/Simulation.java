@@ -58,25 +58,25 @@ public class Simulation {
     public void generate_chaos(){
 
         //Update price of repair
-
         for(int i=0;i<elevators.length;i++){
+
             if(elevators[i].isWorking()){
-
-                double mf1 = elevators[i].getMaintenance()*5.0;
-                repair_elevator_price[i] = (int) mf1;
-
                 Random rand = new Random();
                 int test_broke = rand.nextInt(100);
+
+                Log.i("Cauchy",i+"; maint: "+elevators[i].getMaintenance()+";test broke:"+test_broke+"; prob cauchy: "+this.probCauchy(elevators[i].getMaintenance()));
 
                 if(test_broke < this.probCauchy(elevators[i].getMaintenance())) {
                     elevators[i].setWorking(false);
                     if(i==0){
                         Button buttonUpCapacity = (Button) mainActivity.findViewById(R.id.buttonUpCapacity);
                         buttonUpCapacity.setText("BROKEN ($" + getRepair_elevator_price(0) + ")");
+                        Log.i("Broke","0");
                     }
                     if(i==1){
                         Button buttonElevator2 = (Button) mainActivity.findViewById(R.id.buttonElevator2);
                         buttonElevator2.setText("BROKEN ($" + getRepair_elevator_price(1) + ")");
+                        Log.i("Broke", "1");
                     }
                     Toast toast = Toast.makeText(mainActivity,i+1+ " is BROKEN!", Toast.LENGTH_SHORT);
                     toast.show();
