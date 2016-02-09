@@ -25,6 +25,8 @@ public class Elevator {
     private boolean going_up;
     private boolean working;
 
+    private int current_requested_floor;
+
     public int[] getFloor_queue() {
         return floor_queue;
     }
@@ -108,6 +110,7 @@ public class Elevator {
 
     public void add_requested_floor(int floor){
         this.floor_queue[floor] = 1;
+        this.current_requested_floor = floor;
 
     }
 
@@ -127,14 +130,10 @@ public class Elevator {
         }
         else
             maintenance_prob++;
-
     }
 
     public void where_to_move(){
-
         if(this.working) {
-            int go_to = floor;
-            List<Integer> tmp_list = new ArrayList<>();
 
             if (this.algo == 1) {
                 if (this.floor == this.max_level)
@@ -148,37 +147,8 @@ public class Elevator {
             }
 
             if (this.algo == 2) {
-                //Algo distance ponderee
-                print_Floor_queue();
-                double go2 = 20;
-                List<Integer> tmp_list2 = new ArrayList<>();
-                tmp_list2.clear();
-                for (int i = 0; i < this.floor_queue.length; i++) {
-                    if (this.floor_queue[i] > 0) {
-                        tmp_list2.add(i);
-                    }
-                }
-                List<Double> distance2 = new ArrayList<>();
-                double best_dist2 = go2;
-                for (int i = 0; i < tmp_list2.size(); i++) {
-
-                    double temp2 = Math.abs(-this.floor + tmp_list2.get(i));
-
-                    //TODO
-                    //Ponderer la distance en fonction de nombre de personne en attente a un etage
-                    double pond_floor = this.floor_queue[tmp_list2.get(i)];
-
-                    temp2 = temp2 / pond_floor;
-
-                    distance2.add(temp2);
-                    if (temp2 < best_dist2 && tmp_list2.get(i)!=this.floor) {
-                        best_dist2 = temp2;
-                        go2 = tmp_list2.get(i);
-                    }
-                }
-                if (go2 != 20) {
-                    move_to((int) go2);
-                }
+                //Algo treat request in order
+                move_to(current_requested_floor);
             }
 
             if (this.algo == 3) {

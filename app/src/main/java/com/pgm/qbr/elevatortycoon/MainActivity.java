@@ -56,8 +56,17 @@ public class MainActivity extends AppCompatActivity {
 
         Button buttonME1 = (Button) findViewById(R.id.buttonME1);
         Button buttonME2 = (Button) findViewById(R.id.buttonME2);
-        buttonME1.setText("Maintain ($"+elevators[0].getMaintenance()+")");
-        buttonME2.setText("Maintain ($"+elevators[1].getMaintenance()+")");
+        if(elevators[0].isWorking()){
+            buttonME1.setText("Maintain ($"+elevators[0].getMaintenance()+")");
+        }
+        else
+            buttonME1.setText("BROKEN ($"+simu.getRepair_elevator_price(0)+")");
+
+        if(elevators[1].isWorking()){
+            buttonME2.setText("Maintain ($"+elevators[1].getMaintenance()+")");
+        }
+        else
+            buttonME2.setText("BROKEN ($"+simu.getRepair_elevator_price(1)+")");
 
         Animator animSet = AnimatorInflater.loadAnimator(this, R.animator.cahspop);
         animSet.setTarget(textViewCash);
@@ -159,7 +168,6 @@ public class MainActivity extends AppCompatActivity {
         elevators[0] = new Elevator(ma);elevators[0].setId("E1");
         elevators[1] = new Elevator(ma);elevators[1].setId("E2");
         elevators[1].setFloor(5);
-        elevators[1].setMaintenance(100);
         folks = new ArrayList<>();
         for(int i=0;i<10;i++){
             Random rand = new Random();
@@ -179,8 +187,8 @@ public class MainActivity extends AppCompatActivity {
         setOnClickListenerReset();
         setOnClickListenerRun();
         setOnClickListenerAddFolk();
-        setOnClickListenerUpdate();
-        setOnClickListenerElevator2();
+        setOnClickListenerCapacityE1();
+        setOnClickListenerCapacityE2();
         addListenerSpinnerAlgo();
         setOnClickListenerAlgoButton();
         addListenerSpinnerMusic();
@@ -260,68 +268,40 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    public void setOnClickListenerUpdate(){
+    public void setOnClickListenerCapacityE1(){
         final Button buttonUpCapacity = (Button) findViewById(R.id.buttonUpCapacity);
-        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price(1)+")");
-
+        buttonUpCapacity.setText("CAP+1 ($"+simu.getUp_capacity_price(0)+")");
         buttonUpCapacity.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (elevators[0].isWorking()) {
-                    if (simu.canAffordUpdateCapacity(0)) {
-                        elevators[0].addCapacity();
-                        simu.updateCapacityPrice(0);
-                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
-                        update_cashflow_and_repaint_button();
-                    } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
+                if (simu.canAffordUpdateCapacity(0)) {
+                    elevators[0].addCapacity();
+                    simu.updateCapacityPrice(0);
+                    buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
+                    update_cashflow_and_repaint_button();
                 } else {
-                    if (simu.canAffordRepair(0)) {
-                        elevators[0].setWorking(true);
-                        elevators[0].setMaintenance((int)( elevators[0].getMaintenance()*0.8));
-                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
-                        update_cashflow_and_repaint_button();
-                    } else {
-                        buttonUpCapacity.setText("BROKEN ($" + simu.getRepair_elevator_price(0) + ")");
-                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
+                    Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
-
-
             }
+
         });
     }
 
-    public void setOnClickListenerElevator2(){
+    public void setOnClickListenerCapacityE2(){
         final Button buttonElevator2 = (Button) findViewById(R.id.buttonElevator2);
-        buttonElevator2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+        buttonElevator2.setText("CAP+1 ($"+simu.getUp_capacity_price(1)+")");
         buttonElevator2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (elevators[1].isWorking()) {
-                    if (simu.canAffordUpdateCapacity(1)) {
-                        elevators[1].addCapacity();
-                        simu.updateCapacityPrice(1);
-                        buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
-                        update_cashflow_and_repaint_button();
-                    } else {
-                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
+                if (simu.canAffordUpdateCapacity(1)) {
+                    elevators[1].addCapacity();
+                    simu.updateCapacityPrice(1);
+                    buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
+                    update_cashflow_and_repaint_button();
                 } else {
-                    if (simu.canAffordRepair(1)) {
-                        elevators[1].setWorking(true);
-                        elevators[1].setMaintenance((int) (elevators[1].getMaintenance() * 0.8));
-                        buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
-                        update_cashflow_and_repaint_button();
-                    } else {
-                        buttonElevator2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
-                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
+                    Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });
@@ -438,8 +418,8 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                for(int i=0;i<4;i++){
-                    if(mp_tab[i].isPlaying())
+                for (int i = 0; i < 4; i++) {
+                    if (mp_tab[i].isPlaying())
                         mp_tab[i].pause();
                 }
                 mp_tab[position].start();
@@ -464,6 +444,7 @@ public class MainActivity extends AppCompatActivity {
         refreshSpinnerAlgoItem();
 
         Button buttonAlgo = (Button) findViewById(R.id.buttonAlgo);
+        buttonAlgo.setText("Research Algo ($"+simu.getAlgo_research_price()+")");
         buttonAlgo.setOnClickListener(new View.OnClickListener() {
             int i=1;
             @Override
@@ -472,6 +453,10 @@ public class MainActivity extends AppCompatActivity {
                     simu.addAlgoList(algo_tab[i]);
                     refreshSpinnerAlgoItem();
                     i++;
+                }
+                else {
+                    Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                    toast.show();
                 }
             }
         });
@@ -487,6 +472,9 @@ public class MainActivity extends AppCompatActivity {
         music_tab[3] = "Hey";
 
         Button buttonMusic = (Button) findViewById(R.id.buttonMusic);
+
+        buttonMusic.setText("New Music ($"+simu.getMusic_research_price()+")");
+
         buttonMusic.setOnClickListener(new View.OnClickListener() {
             int i=0;
             @Override
@@ -504,24 +492,60 @@ public class MainActivity extends AppCompatActivity {
     public void setOnClickListenerMaintainButton(){
 
 
-        Button buttonME1 = (Button) findViewById(R.id.buttonME1);
+        final Button buttonME1 = (Button) findViewById(R.id.buttonME1);
+        update_cashflow_and_repaint_button();
         buttonME1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (simu.canAffordMaintainReset(0)) {
-                    elevators[0].resetMaintenance();
-                    update_cashflow_and_repaint_button();
+                if(elevators[0].isWorking()){
+                    if(simu.canAffordMaintainReset(0)){
+                        elevators[0].resetMaintenance();
+                        update_cashflow_and_repaint_button();
+                    }
+                    else {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }
+                else {
+                    if (simu.canAffordRepair(0)) {
+                        elevators[0].setWorking(true);
+                        elevators[0].setMaintenance((int) (elevators[0].getMaintenance() * 0.8));
+                        update_cashflow_and_repaint_button();
+                    } else {
+                        buttonME1.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
             }
         });
 
-        Button buttonME2 = (Button) findViewById(R.id.buttonME2);
+        final Button buttonME2 = (Button) findViewById(R.id.buttonME2);
+        buttonME2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
         buttonME2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (simu.canAffordMaintainReset(1)) {
-                    elevators[1].resetMaintenance();
-                    update_cashflow_and_repaint_button();
+                if(elevators[1].isWorking()){
+                    if(simu.canAffordMaintainReset(1)){
+                        elevators[1].resetMaintenance();
+                        update_cashflow_and_repaint_button();
+                    }
+                    else {
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }
+                else {
+                    if (simu.canAffordRepair(1)) {
+                        elevators[1].setWorking(true);
+                        elevators[1].setMaintenance((int) (elevators[1].getMaintenance() * 0.8));
+                        update_cashflow_and_repaint_button();
+                    } else {
+                        buttonME2.setText("BROKEN ($" + simu.getRepair_elevator_price(1) + ")");
+                        Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
                 }
             }
         });
