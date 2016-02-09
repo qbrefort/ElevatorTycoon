@@ -63,8 +63,6 @@ public class MainActivity extends AppCompatActivity {
         animSet.setTarget(textViewCash);
         animSet.start();
 
-
-
     }
 
     public void set_image_elevator(){
@@ -270,10 +268,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (elevators[0].isWorking()) {
-                    if (simu.canAffordUpdateCapacity(1)) {
+                    if (simu.canAffordUpdateCapacity(0)) {
                         elevators[0].addCapacity();
-                        simu.updateCapacityPrice(1);
-                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
+                        simu.updateCapacityPrice(0);
+                        buttonUpCapacity.setText("CAP+1 ($" + simu.getUp_capacity_price(0) + ")");
                         update_cashflow_and_repaint_button();
                     } else {
                         Toast toast = Toast.makeText(getApplicationContext(), "Not enough minerals", Toast.LENGTH_SHORT);
@@ -316,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     if (simu.canAffordRepair(1)) {
                         elevators[1].setWorking(true);
-                        elevators[0].setMaintenance((int)( elevators[0].getMaintenance()*0.8));
+                        elevators[1].setMaintenance((int) (elevators[1].getMaintenance() * 0.8));
                         buttonElevator2.setText("CAP+1 ($" + simu.getUp_capacity_price(1) + ")");
                         update_cashflow_and_repaint_button();
                     } else {
@@ -404,8 +402,11 @@ public class MainActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String sort_carac = parent.getItemAtPosition(position).toString();
-
+                for(int i=0;i<elevators.length;i++){
+                    for(Elevator el:elevators) {
+                        el.setAlgo(position + 1);
+                    }
+                }
             }
 
             @Override
@@ -455,17 +456,22 @@ public class MainActivity extends AppCompatActivity {
     public void setOnClickListenerAlgoButton(){
 
         final String[] algo_tab = new String[3];
-        algo_tab[0] = "top bottom";
-        algo_tab[1] = "distance";
-        algo_tab[2] = "classic";
+        algo_tab[0] = "Closest Dist.";
+        algo_tab[1] = "Weighted Dist.";
+        algo_tab[2] = "up/down";
+
+        simu.addAlgoList(algo_tab[0]);
+        refreshSpinnerAlgoItem();
 
         Button buttonAlgo = (Button) findViewById(R.id.buttonAlgo);
         buttonAlgo.setOnClickListener(new View.OnClickListener() {
+            int i=1;
             @Override
             public void onClick(View v) {
-                if (simu.canAffordResearchAlgo()) {
-                    simu.addAlgoList(algo_tab[0]);
+                if (simu.canAffordResearchAlgo() && i<3) {
+                    simu.addAlgoList(algo_tab[i]);
                     refreshSpinnerAlgoItem();
+                    i++;
                 }
             }
         });
@@ -479,8 +485,6 @@ public class MainActivity extends AppCompatActivity {
         music_tab[1] = "Refresh";
         music_tab[2] = "Best";
         music_tab[3] = "Hey";
-
-
 
         Button buttonMusic = (Button) findViewById(R.id.buttonMusic);
         buttonMusic.setOnClickListener(new View.OnClickListener() {

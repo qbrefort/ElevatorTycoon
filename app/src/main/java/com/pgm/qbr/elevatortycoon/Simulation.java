@@ -25,7 +25,7 @@ public class Simulation {
     private List<String> algoList;
     private List<String> musicList;
     private int algo_research_price;
-    private int algo_research_music_price;
+    private int music_research_price;
 
     private int prob_broken;
 
@@ -34,13 +34,13 @@ public class Simulation {
         this.elevators = elevators;
         this.iteration = 0;
         this.mainActivity = ma;
-        this.cash = 0;
+        this.cash = 100;
         this.algoList = new ArrayList<>();
         this.musicList = new ArrayList<>();
         this.up_capacity_price = new int[2];up_capacity_price[0]=up_capacity_price[1]=50;
         this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=500;
-        this.algo_research_price = 50;
-        this.algo_research_music_price = 10;
+        this.algo_research_price = 1;
+        this.music_research_price = 10;
         this.prob_broken = 0;
     }
 
@@ -114,6 +114,11 @@ public class Simulation {
                 for (int i = 0; i < folks.size(); i++) {
                     folks.get(i).goInElevator(elevators);
                     folks.get(i).add_waiting_time();
+                    if(folks.get(i).isWaiting() && folks.get(i).getTime_waiting()>10){
+                        Toast toast = Toast.makeText(mainActivity, "Fuck this, I am taking the stairs", Toast.LENGTH_SHORT);
+                        //toast.show();
+                        folks.remove(i);
+                    }
                 }
                 break;
         }
@@ -171,8 +176,8 @@ public class Simulation {
     }
 
     public boolean canAffordResearchMusic(){
-        if(this.cash>= this.algo_research_music_price){
-            this.cash -= this.algo_research_music_price;
+        if(this.cash>= this.music_research_price){
+            this.cash -= this.music_research_price;
             return true;
         }
 

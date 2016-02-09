@@ -74,6 +74,10 @@ public class Folk {
                 this.waiting = false;
                 this.isIn = true;
             }
+            //Treat case when the elevator passes but isFull; request again the elevator
+            if(this.waiting && elevator.isFull() && this.current_floor == elevator.getFloor()){
+                this.request_elevators(elevators);
+            }
         }
     }
 
