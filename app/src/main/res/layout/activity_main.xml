@@ -33,21 +33,13 @@
         android:layout_marginBottom="@dimen/fab_margin"
         android:src="@android:drawable/ic_media_play" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/add"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginRight="100dp"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:src="@android:drawable/ic_media_next" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/reset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
-        android:layout_marginRight="180dp"
+        android:layout_marginRight="100dp"
         android:layout_marginBottom="@dimen/fab_margin"
         android:src="@android:drawable/ic_media_rew" />
 

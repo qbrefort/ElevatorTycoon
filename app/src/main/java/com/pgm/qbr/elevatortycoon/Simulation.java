@@ -26,6 +26,11 @@ public class Simulation {
     private List<String> musicList;
     private int algo_research_price;
     private int music_research_price;
+    private int music_played;
+    private int add_elevator;
+    private boolean new_elevator_added;
+
+    private int cash_earned;
 
     public Simulation(MainActivity ma, List<Folk> waiting_folk, Elevator[] elevators) {
         this.folks = waiting_folk;
@@ -38,7 +43,11 @@ public class Simulation {
         this.up_capacity_price = new int[2];up_capacity_price[0]=up_capacity_price[1]=50;
         this.repair_elevator_price = new int[2];repair_elevator_price[0]=repair_elevator_price[1]=500;
         this.algo_research_price = 200;
-        this.music_research_price = 10;
+        this.music_research_price = 150;
+        this.music_played = 0;
+        this.new_elevator_added = false;
+        this.cash_earned = 50;
+        this.add_elevator = 0;
     }
 
     public List<Folk> getFolks() {
@@ -81,10 +90,21 @@ public class Simulation {
                 }
             }
         }
+
+        Random rand = new Random();
+        int test_broke = rand.nextInt(98)+2;
+        add_elevator++;
+
+        if(test_broke < probCauchy(add_elevator,80,2)) {
+            add_elevator = 0;
+            elevators[0].addMax_level();
+            Toast toast = Toast.makeText(mainActivity,"Firm is in expansion ! New floor added", Toast.LENGTH_SHORT);
+            toast.show();
+        }
     }
 
-    public void iterate(int iter) {
-        switch (iter) {
+    public void iterate(int coup) {
+        switch (coup) {
             case 0:
                 Log.i("Iteration", "" + iteration);
                 this.elevators[0].where_to_move();
@@ -150,7 +170,17 @@ public class Simulation {
         return music_research_price;
     }
 
+    public void setMusic_played(int music_played) {
+        this.music_played = music_played;
+    }
 
+    public boolean isNew_elevator_added() {
+        return new_elevator_added;
+    }
+
+    public void setNew_elevator_added(boolean new_elevator_added) {
+        this.new_elevator_added = new_elevator_added;
+    }
 
     public boolean canAffordRepair(int i){
         if(this.cash>= this.repair_elevator_price[i]) {
@@ -212,14 +242,24 @@ public class Simulation {
     }
 
     public void operateCash_by_time_waiting(Folk folk) {
+        double multiply_music = 1;
+        if(music_played ==0)    multiply_music = 1.06;
+        if(music_played ==1)    multiply_music = 1.20;
+        if(music_played ==2)    multiply_music = 1.36;
+        if(music_played ==3)    multiply_music = 1.77;
         double time = (double) folk.getTime_waiting();
-        int cash_to_add = (int) (50/time);
+        int cash_to_add = (int) (cash_earned/time*multiply_music);
         this.cash += cash_to_add;
     }
 
     public int probCauchy(double x){
         double x0 = 40;
         double a = 2;
+        double res = 1.0/Math.PI*Math.atan((x-x0)/a) + 0.5;
+        res*=100;
+        return (int) res;
+    }
+    public int probCauchy(double x, double x0, double a){
         double res = 1.0/Math.PI*Math.atan((x-x0)/a) + 0.5;
         res*=100;
         return (int) res;

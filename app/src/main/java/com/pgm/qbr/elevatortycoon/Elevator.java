@@ -47,14 +47,14 @@ public class Elevator {
 
     public Elevator(MainActivity ma) {
         this.capacity = 3;
-        this.max_level = 8;
+        this.max_level = 5;
         this.nb_person_in = 0;
         this.floor = 0;
         this.going_up = true;
         this.working = false;
         this.maintenance = 0;
         this.maintenance_prob = 0;
-        this.floor_queue = new int[this.max_level+1];
+        this.floor_queue = new int[11];
         for (int i = 0 ;i<this.floor_queue.length; i++){
             this.floor_queue[i] = 0;
         }
@@ -75,6 +75,7 @@ public class Elevator {
     public void setWorking(boolean w){
         this.working = w;Log.i("Working changed",this.getId()+w);
     }
+    public void addMax_level(){if(max_level<11) this.max_level++;}
     public boolean isWorking(){return this.working;}
 
     public String getId(){

@@ -381,7 +381,7 @@ z
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="20dp"
-            android:text="E1"/>
+            android:text="E1 "/>
 
 
         <LinearLayout
@@ -432,7 +432,7 @@ z
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:textSize="20dp"
-            android:text="E2"/>
+            android:text="E2 "/>
 
         <LinearLayout
             android:orientation="vertical"
